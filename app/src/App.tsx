@@ -1,11 +1,15 @@
+import { useEffect, useState } from 'react'
+import type { Session } from '@supabase/supabase-js'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { supabase } from './lib/supabase'
 import BottomNav from './components/BottomNav'
+import LoginPage from './pages/LoginPage'
 import JualPage from './pages/JualPage'
 import StokPage from './pages/StokPage'
 import RekapPage from './pages/RekapPage'
 import LainnyaPage from './pages/LainnyaPage'
 
-function App() {
+export function AppShell() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-gray-50">
       <header className="sticky top-0 z-10 bg-brand px-4 py-3 text-white shadow">
@@ -23,6 +27,32 @@ function App() {
       <BottomNav />
     </div>
   )
+}
+
+function App() {
+  const [session, setSession] = useState<Session | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setLoading(false)
+    })
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+    })
+    return () => sub.subscription.unsubscribe()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-gray-50 text-gray-500">
+        Memuat…
+      </div>
+    )
+  }
+  if (!session) return <LoginPage />
+  return <AppShell />
 }
 
 export default App
