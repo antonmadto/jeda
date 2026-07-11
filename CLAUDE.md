@@ -8,7 +8,7 @@ Aplikasi pencatatan untuk JE&DA, usaha jus cold pressed di Pandeglang. Pemilik b
 
 ## Stack
 
-1. Frontend React 18 + Vite + TypeScript, Tailwind CSS, PWA via vite-plugin-pwa.
+1. Frontend React 19 + Vite + TypeScript, Tailwind CSS 4, PWA via vite-plugin-pwa. Kode app di folder `app/`.
 2. Backend Supabase (Postgres, Auth, Row Level Security). Paket gratis.
 3. State ringan pakai Zustand. Jangan pakai Redux.
 4. Test unit pakai Vitest, test alur pakai Playwright.
