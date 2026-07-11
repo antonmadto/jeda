@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuesioner Usaha Jus JE&amp;DA</title>
+<style>
+  :root{
+    --pink:#D81B60; --pink-dark:#AD1457; --pink-soft:#FCE4EC;
+    --ink:#3A2E33; --muted:#8A7580; --bg:#FFF7FA; --card:#FFFFFF;
+    --line:#F3D9E3; --ok:#2E7D32;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5; padding-bottom:120px;
+  }
+  header{
+    background:linear-gradient(135deg,var(--pink) 0%,var(--pink-dark) 100%);
+    color:#fff; padding:28px 20px 22px; text-align:center;
+  }
+  header .logo{
+    display:inline-block; border:3px solid #fff; border-radius:10px;
+    padding:6px 14px; font-weight:800; font-size:22px; letter-spacing:1px; margin-bottom:10px;
+  }
+  header h1{font-size:19px; font-weight:700;}
+  header p{font-size:13px; opacity:.9; margin-top:6px;}
+  .progress-wrap{
+    position:sticky; top:0; z-index:10; background:var(--card);
+    border-bottom:1px solid var(--line); padding:10px 16px;
+  }
+  .progress-label{font-size:12px; color:var(--muted); margin-bottom:5px; display:flex; justify-content:space-between;}
+  .progress-bar{height:8px; background:var(--pink-soft); border-radius:99px; overflow:hidden;}
+  .progress-fill{height:100%; width:0%; background:var(--pink); border-radius:99px; transition:width .3s;}
+  main{max-width:640px; margin:0 auto; padding:16px;}
+  .intro{
+    background:var(--pink-soft); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; font-size:14px; margin-bottom:16px;
+  }
+  .section{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    margin-bottom:16px; overflow:hidden;
+  }
+  .section-head{
+    width:100%; display:flex; align-items:center; gap:10px; background:none; border:none;
+    padding:14px 16px; cursor:pointer; text-align:left; font-family:inherit;
+  }
+  .section-head .badge{
+    background:var(--pink); color:#fff; font-weight:700; font-size:13px;
+    width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .section-head .title{font-weight:700; font-size:15px; color:var(--ink); flex:1;}
+  .section-head .count{font-size:12px; color:var(--muted);}
+  .section-head .chev{color:var(--pink); transition:transform .2s; font-size:13px;}
+  .section.open .chev{transform:rotate(90deg);}
+  .section-body{display:none; padding:2px 16px 16px;}
+  .section.open .section-body{display:block;}
+  .q{margin-top:14px;}
+  .q label.qtext{display:block; font-size:14px; font-weight:600; margin-bottom:6px;}
+  .q .num{color:var(--pink); font-weight:800; margin-right:4px;}
+  textarea, input[type=text]{
+    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px;
+    font-family:inherit; font-size:15px; color:var(--ink); background:#FFFDFE; resize:vertical;
+  }
+  textarea:focus, input[type=text]:focus{outline:none; border-color:var(--pink);}
+  textarea{min-height:52px;}
+  .opts{display:flex; flex-wrap:wrap; gap:8px;}
+  .opts label{
+    border:1.5px solid var(--line); border-radius:99px; padding:7px 14px; font-size:14px;
+    cursor:pointer; background:#FFFDFE; user-select:none;
+  }
+  .opts input{display:none;}
+  .opts label.on{background:var(--pink); border-color:var(--pink); color:#fff; font-weight:600;}
+  .rank-hint{font-size:12px; color:var(--muted); margin-bottom:8px;}
+  .rank-list{display:flex; flex-direction:column; gap:8px;}
+  .rank-item{
+    display:flex; align-items:center; gap:10px; border:1.5px solid var(--line);
+    border-radius:10px; padding:10px 12px; font-size:14px; cursor:pointer; background:#FFFDFE; user-select:none;
+  }
+  .rank-item .rk{
+    width:24px; height:24px; border-radius:50%; border:1.5px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--muted); flex-shrink:0;
+  }
+  .rank-item.picked{border-color:var(--pink); background:var(--pink-soft);}
+  .rank-item.picked .rk{background:var(--pink); border-color:var(--pink); color:#fff;}
+  .meta-grid{display:grid; grid-template-columns:1fr; gap:12px; margin-top:8px;}
+  .footer-note{font-size:12px; color:var(--muted); text-align:center; margin:18px 0;}
+  .actions{
+    position:fixed; bottom:0; left:0; right:0; background:var(--card);
+    border-top:1px solid var(--line); padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    display:flex; gap:10px; max-width:100%; justify-content:center;
+  }
+  .btn{
+    border:none; border-radius:12px; padding:13px 16px; font-size:15px; font-weight:700;
+    cursor:pointer; font-family:inherit; flex:1; max-width:300px;
+  }
+  .btn-pdf{background:var(--pink); color:#fff;}
+  .btn-pdf:active{background:var(--pink-dark);}
+  .btn-pdf[disabled]{opacity:.6;}
+  .btn-ghost{background:var(--pink-soft); color:var(--pink-dark); flex:0 0 auto;}
+  .toast{
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:#fff; font-size:13px; padding:10px 18px; border-radius:99px;
+    opacity:0; pointer-events:none; transition:opacity .3s; z-index:50; white-space:nowrap;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">JE&amp;DA</div>
+  <h1>Kuesioner Pengembangan Aplikasi</h1>
+  <p>Diisi santai saja, jawaban boleh perkiraan. Jawaban tersimpan otomatis di HP ini.</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label"><span>Progres pengisian</span><span id="progText">0 dari 0 terjawab</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+</div>
+
+<main>
+  <div class="intro">
+    Kuesioner ini untuk merancang aplikasi pencatatan usaha jus. Tidak ada jawaban salah.
+    Kalau ada pertanyaan yang tidak relevan, lewati saja. Setelah selesai, tekan tombol
+    <b>Simpan PDF</b> di bawah, lalu kirim file PDF nya lewat WhatsApp.
+  </div>
+
+  <div class="meta-grid section open" style="padding:16px;">
+    <div class="q" style="margin-top:0;">
+      <label class="qtext">Nama pengisi</label>
+      <input type="text" id="meta-nama" data-q placeholder="Nama">
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <p class="footer-note">Semua jawaban hanya tersimpan di HP ini sampai kamu menekan tombol kirim.</p>
+</main>
+
+<div class="actions">
+  <button class="btn btn-ghost" id="btnCopy" type="button">Salin</button>
+  <button class="btn btn-pdf" id="btnPDF" type="button">Simpan PDF</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var SECTIONS = [
+  {key:"A", title:"Profil Usaha", qs:[
+    {n:1,  t:"Sudah berapa lama jualan dan bagaimana ceritanya sampai bertahan setahun ini?"},
+    {n:2,  t:"Jualan di mana saja sekarang? Lapak depan Toko Dirgantara saja atau ada titik lain?"},
+    {n:3,  t:"Jualan berapa hari dalam seminggu? Jam berapa mulai persiapan sampai beres beres?"},
+    {n:4,  t:"Siapa saja yang terlibat? Sendiri, dibantu keluarga, atau karyawan?"},
+    {n:5,  t:"Selain jualan langsung di lapak, ada jalur lain? Pre order WhatsApp, titip jual, ojek online?"},
+    {n:6,  t:"Setahun ke depan pengin usaha ini jadi seperti apa? Tambah titik jualan, masuk GoFood, punya karyawan, atau lainnya?"}
+  ]},
+  {key:"B", title:"Produk dan Harga", qs:[
+    {n:7,  t:"Ada berapa jenis jus atau minuman yang dijual sekarang? Sebutkan semua beserta harganya."},
+    {n:8,  t:"Setiap produk ada berapa varian kemasan dan ukuran? Misal botol 250 ml dan cup."},
+    {n:9,  t:"Menu berubah ubah tiap hari atau tetap? Ada menu musiman tergantung buah?"},
+    {n:10, t:"Produk mana yang paling laku? Produk mana yang menurutmu paling untung? Yakin atau hanya perasaan?"},
+    {n:11, t:"Ada harga khusus? Misal beli banyak, harga reseller, atau promo."}
+  ]},
+  {key:"C", title:"Alur Jualan Harian", qs:[
+    {n:12, t:"Ceritakan alur satu hari jualan, dari belanja bahan sampai tutup lapak."},
+    {n:13, t:"Jus dibuat kapan?", type:"radio", opts:["Semua di awal hari","Saat ada pembeli","Campuran keduanya"]},
+    {n:14, t:"Rata rata berapa botol atau cup terjual per hari? Hari apa dan jam berapa paling ramai?"},
+    {n:15, t:"Kalau jus tidak habis, sisanya diapakan? Kira kira berapa yang terbuang per hari atau per minggu?"},
+    {n:16, t:"Pernah kehabisan produk saat masih ramai pembeli? Seberapa sering?"}
+  ]},
+  {key:"D", title:"Pencatatan Sekarang", qs:[
+    {n:17, t:"Apa saja yang dicatat sekarang dan pakai apa? Buku tulis, HP, atau ingatan saja?"},
+    {n:18, t:"Kapan mencatatnya? Setiap transaksi, tiap sore, atau kalau sempat?"},
+    {n:19, t:"Boleh difoto catatannya? Nanti fotonya dikirim terpisah lewat WhatsApp. Tulis di sini ya atau tidak."},
+    {n:20, t:"Apa yang paling sering lupa atau salah catat?"},
+    {n:21, t:"Apa yang paling bikin repot atau kesal dari cara mencatat sekarang?"},
+    {n:22, t:"Sekarang tahu tidak untung bersih per hari atau per bulan? Kalau tahu, bagaimana menghitungnya?"},
+    {n:23, t:"Pernah tidak uangnya terasa kurang padahal jualan ramai? Menurutmu larinya ke mana?"}
+  ]},
+  {key:"E", title:"Bahan Baku dan Belanja", qs:[
+    {n:24, t:"Bahan apa saja yang dibelanjakan rutin? Buah, susu, kurma, es, botol, cup, sedotan, stiker."},
+    {n:25, t:"Belanja di mana dan seberapa sering? Harian, dua hari sekali, mingguan?"},
+    {n:26, t:"Bagaimana menentukan jumlah belanja? Perasaan, catatan, atau kebiasaan?"},
+    {n:27, t:"Tahu tidak biaya bahan untuk membuat 1 botol jus tertentu? Misal 1 botol Kurma Susu."},
+    {n:28, t:"Kalau harga bahan naik, harga jual ikut disesuaikan atau tidak?"}
+  ]},
+  {key:"F", title:"Pembayaran dan Uang", qs:[
+    {n:29, t:"Pembeli bayar pakai apa saja? Kira kira berapa persen tunai dan berapa persen QRIS?"},
+    {n:30, t:"QRIS pakai aplikasi apa dan uangnya masuk ke rekening siapa?"},
+    {n:31, t:"Uang usaha dan uang pribadi bagaimana?", type:"radio", opts:["Terpisah","Campur"]},
+    {n:32, t:"Ada utang piutang? Misal pelanggan bayar belakangan atau bon ke pemasok."},
+    {n:33, t:"Ada setoran, cicilan, atau kewajiban rutin lain yang harus diperhitungkan?"}
+  ]},
+  {key:"G", title:"Pelanggan", qs:[
+    {n:34, t:"Kira kira berapa pelanggan tetap yang hampir tiap hari atau tiap minggu beli?"},
+    {n:35, t:"Ada pelanggan yang pesan lewat WhatsApp dulu? Seberapa sering?"},
+    {n:36, t:"Pernah kepikiran bikin sistem langganan? Misal paket seminggu 5 botol."},
+    {n:37, t:"Pelanggan paling sering tanya apa? Stok rasa hari ini, bisa antar atau tidak, atau lainnya?"}
+  ]},
+  {key:"H", title:"HP dan Kebiasaan Teknologi", qs:[
+    {n:38, t:"HP yang dipakai sehari hari apa? Merek, umur kira kira, memori sering penuh atau tidak?"},
+    {n:39, t:"Aplikasi apa yang paling sering dipakai? WhatsApp, Instagram, TikTok, mobile banking?"},
+    {n:40, t:"Sinyal internet di lokasi lapak bagaimana?", type:"radio", opts:["Lancar","Kadang hilang","Sering hilang"]},
+    {n:41, t:"Pernah coba aplikasi kasir atau pencatatan seperti Kasir Pintar atau BukuWarung? Kalau pernah lalu berhenti, kenapa?"},
+    {n:42, t:"Kalau ada aplikasi baru, lebih suka bagaimana?", type:"radio", opts:["Belajar sendiri","Diajari langsung"]}
+  ]},
+  {key:"I", title:"Harapan Terhadap Aplikasi", qs:[
+    {n:43, t:"Kalau ada satu hal saja yang bisa dibereskan aplikasi ini, pengin itu apa?"},
+    {n:44, t:"Pilih 3 yang paling dibutuhkan, urut dari yang paling penting.", type:"rank", opts:[
+      "Catat penjualan cepat",
+      "Tahu untung bersih harian",
+      "Tahu produk mana yang paling menguntungkan",
+      "Ingat stok bahan dan kapan harus belanja",
+      "Catat pesanan pre order pelanggan",
+      "Rekap otomatis buat evaluasi bulanan",
+      "Data pelanggan buat promo"
+    ]},
+    {n:45, t:"Siapa saja yang nanti akan pakai aplikasinya?"},
+    {n:46, t:"Ada kekhawatiran soal pakai aplikasi? Takut ribet, takut data hilang, atau lainnya?"},
+    {n:47, t:"Bersedia tidak seminggu pertama mencatat dobel, di aplikasi dan di buku, supaya aplikasinya bisa dicek benar?", type:"radio", opts:["Bersedia","Tidak"]}
+  ]}
+];
+
+var STORE_KEY = "kuesioner-jeda-v1";
+var answers = {};
+var rankOrder = {}; // qid -> array of picked option texts in order
+
+function safeLoad(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var d = JSON.parse(raw); answers = d.answers || {}; rankOrder = d.rankOrder || {}; }
+  }catch(e){}
+}
+function safeSave(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({answers:answers, rankOrder:rankOrder})); }catch(e){}
+}
+
+function totalQuestions(){
+  var t = 1; // nama
+  SECTIONS.forEach(function(s){ t += s.qs.length; });
+  return t;
+}
+
+function answeredCount(){
+  var c = 0;
+  if((answers["meta-nama"]||"").trim()) c++;
+  SECTIONS.forEach(function(s){ s.qs.forEach(function(q){
+    var id = "q"+q.n;
+    if(q.type === "rank"){ if((rankOrder[id]||[]).length > 0) c++; }
+    else if((answers[id]||"").trim()) c++;
+  });});
+  return c;
+}
+
+function updateProgress(){
+  var t = totalQuestions(), c = answeredCount();
+  document.getElementById("progText").textContent = c + " dari " + t + " terjawab";
+  document.getElementById("progFill").style.width = (t ? Math.round(c/t*100) : 0) + "%";
+  SECTIONS.forEach(function(s){
+    var done = s.qs.filter(function(q){
+      var id = "q"+q.n;
+      return q.type === "rank" ? (rankOrder[id]||[]).length > 0 : (answers[id]||"").trim();
+    }).length;
+    var el = document.getElementById("count-"+s.key);
+    if(el) el.textContent = done + "/" + s.qs.length;
+  });
+}
+
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function render(){
+  var root = document.getElementById("sections");
+  var html = "";
+  SECTIONS.forEach(function(s, si){
+    html += '<div class="section'+(si===0?' open':'')+'" id="sec-'+s.key+'">';
+    html += '<button class="section-head" type="button" data-sec="'+s.key+'">';
+    html += '<span class="badge">'+s.key+'</span><span class="title">'+esc(s.title)+'</span>';
+    html += '<span class="count" id="count-'+s.key+'">0/'+s.qs.length+'</span><span class="chev">&#9654;</span></button>';
+    html += '<div class="section-body">';
+    s.qs.forEach(function(q){
+      var id = "q"+q.n;
+      html += '<div class="q"><label class="qtext" for="'+id+'"><span class="num">'+q.n+'.</span>'+esc(q.t)+'</label>';
+      if(q.type === "radio"){
+        html += '<div class="opts" data-radio="'+id+'">';
+        q.opts.forEach(function(o){
+          html += '<label data-val="'+esc(o)+'"><input type="radio" name="'+id+'">'+esc(o)+'</label>';
+        });
+        html += '</div>';
+      } else if(q.type === "rank"){
+        html += '<div class="rank-hint">Ketuk untuk memilih, ketuk lagi untuk membatalkan. Urutan mengikuti urutan ketukan. Maksimal 3.</div>';
+        html += '<div class="rank-list" data-rank="'+id+'">';
+        q.opts.forEach(function(o){
+          html += '<div class="rank-item" data-val="'+esc(o)+'"><span class="rk"></span><span>'+esc(o)+'</span></div>';
+        });
+        html += '</div>';
+      } else {
+        html += '<textarea id="'+id+'" data-q rows="2" placeholder="Jawaban"></textarea>';
+      }
+      html += '</div>';
+    });
+    html += '</div></div>';
+  });
+  root.innerHTML = html;
+
+  // restore + bind textareas and nama
+  document.querySelectorAll("[data-q]").forEach(function(el){
+    var id = el.id;
+    if(answers[id]) el.value = answers[id];
+    el.addEventListener("input", function(){
+      answers[id] = el.value; safeSave(); updateProgress();
+    });
+  });
+
+  // section toggle
+  document.querySelectorAll(".section-head").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      btn.parentElement.classList.toggle("open");
+    });
+  });
+
+  // radios
+  document.querySelectorAll("[data-radio]").forEach(function(group){
+    var id = group.getAttribute("data-radio");
+    var labels = group.querySelectorAll("label");
+    function paint(){
+      labels.forEach(function(l){
+        l.classList.toggle("on", l.getAttribute("data-val") === answers[id]);
+      });
+    }
+    labels.forEach(function(l){
+      l.addEventListener("click", function(ev){
+        ev.preventDefault();
+        var v = l.getAttribute("data-val");
+        answers[id] = (answers[id] === v) ? "" : v;
+        paint(); safeSave(); updateProgress();
+      });
+    });
+    paint();
+  });
+
+  // rank
+  document.querySelectorAll("[data-rank]").forEach(function(group){
+    var id = group.getAttribute("data-rank");
+    if(!rankOrder[id]) rankOrder[id] = [];
+    var items = group.querySelectorAll(".rank-item");
+    function paint(){
+      items.forEach(function(it){
+        var v = it.getAttribute("data-val");
+        var idx = rankOrder[id].indexOf(v);
+        it.classList.toggle("picked", idx >= 0);
+        it.querySelector(".rk").textContent = idx >= 0 ? (idx+1) : "";
+      });
+    }
+    items.forEach(function(it){
+      it.addEventListener("click", function(){
+        var v = it.getAttribute("data-val");
+        var idx = rankOrder[id].indexOf(v);
+        if(idx >= 0){ rankOrder[id].splice(idx,1); }
+        else if(rankOrder[id].length < 3){ rankOrder[id].push(v); }
+        else { showToast("Maksimal 3 pilihan. Batalkan salah satu dulu."); return; }
+        paint(); safeSave(); updateProgress();
+      });
+    });
+    paint();
+  });
+}
+
+function buildText(){
+  var lines = [];
+  lines.push("*KUESIONER USAHA JUS JE&DA*");
+  lines.push("Pengisi: " + ((answers["meta-nama"]||"").trim() || "(tidak diisi)"));
+  lines.push("Terjawab: " + answeredCount() + " dari " + totalQuestions());
+  SECTIONS.forEach(function(s){
+    lines.push("");
+    lines.push("*" + s.key + ". " + s.title + "*");
+    s.qs.forEach(function(q){
+      var id = "q"+q.n, a;
+      if(q.type === "rank"){
+        var r = rankOrder[id]||[];
+        a = r.length ? r.map(function(v,i){ return (i+1)+") "+v; }).join("  ") : "";
+      } else {
+        a = (answers[id]||"").trim();
+      }
+      lines.push(q.n + ". " + (a || "-"));
+    });
+  });
+  return lines.join("\n");
+}
+
+function showToast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(function(){ t.classList.remove("show"); }, 2500);
+}
+
+// ---------- Pembuat PDF mini, murni JavaScript, bekerja offline ----------
+var PDF_W = 595.28, PDF_H = 841.89;
+
+function MiniPDF(){
+  this.pages = [];
+  this.cur = null;
+  var cv = document.createElement("canvas");
+  this._ctx = cv.getContext("2d");
+}
+MiniPDF.prototype._fontCss = function(f){
+  if(f === "F2") return "bold ";
+  if(f === "F3") return "italic ";
+  return "";
+};
+MiniPDF.prototype.addPage = function(){
+  this.cur = { ops: [] };
+  this.pages.push(this.cur);
+};
+MiniPDF.prototype.rect = function(x, yTop, w, h, rgb){
+  var y = PDF_H - yTop - h;
+  this.cur.ops.push(rgb.join(" ") + " rg " +
+    x.toFixed(2) + " " + y.toFixed(2) + " " + w.toFixed(2) + " " + h.toFixed(2) + " re f");
+};
+MiniPDF.prototype.text = function(str, x, yTop, size, font, rgb){
+  var y = PDF_H - yTop;
+  this.cur.ops.push("BT /" + font + " " + size + " Tf " + rgb.join(" ") + " rg 1 0 0 1 " +
+    x.toFixed(2) + " " + y.toFixed(2) + " Tm (" + pdfEscape(str) + ") Tj ET");
+};
+MiniPDF.prototype.textWidth = function(str, size, font){
+  this._ctx.font = this._fontCss(font) + size + "px Helvetica, Arial, sans-serif";
+  return this._ctx.measureText(str).width;
+};
+MiniPDF.prototype.wrap = function(str, size, font, maxW){
+  var out = [];
+  var paras = String(str).split(/\n/);
+  for(var p = 0; p < paras.length; p++){
+    var words = paras[p].split(/\s+/).filter(function(w){ return w.length; });
+    if(!words.length){ out.push(""); continue; }
+    var line = "";
+    for(var i = 0; i < words.length; i++){
+      var t = line ? line + " " + words[i] : words[i];
+      if(this.textWidth(t, size, font) <= maxW || !line){ line = t; }
+      else { out.push(line); line = words[i]; }
+    }
+    if(line) out.push(line);
+  }
+  return out;
+};
+function pdfEscape(s){
+  var out = "";
+  for(var i = 0; i < s.length; i++){
+    var c = s.charCodeAt(i);
+    var ch = s.charAt(i);
+    if(ch === "\\" || ch === "(" || ch === ")") out += "\\" + ch;
+    else if(c >= 32 && c <= 126) out += ch;
+    else if(c >= 160 && c <= 255) out += "\\" + ("000" + c.toString(8)).slice(-3);
+    else out += "?";
+  }
+  return out;
+}
+MiniPDF.prototype.build = function(){
+  var objs = [];
+  var n = this.pages.length;
+  var firstPageObj = 6;
+  var kids = [];
+  for(var i = 0; i < n; i++) kids.push((firstPageObj + i*2) + " 0 R");
+
+  objs.push("<< /Type /Catalog /Pages 2 0 R >>");                                   // 1
+  objs.push("<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + n + " >>");  // 2
+  objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");          // 3
+  objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");     // 4
+  objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>");  // 5
+
+  for(var i = 0; i < n; i++){
+    var contentRef = (firstPageObj + i*2 + 1);
+    objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + PDF_W + " " + PDF_H + "] " +
+      "/Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents " + contentRef + " 0 R >>");
+    var stream = this.pages[i].ops.join("\n");
+    objs.push("<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
+  }
+
+  var pdf = "%PDF-1.4\n";
+  var offsets = [0];
+  for(var i = 0; i < objs.length; i++){
+    offsets.push(pdf.length);
+    pdf += (i+1) + " 0 obj\n" + objs[i] + "\nendobj\n";
+  }
+  var xrefPos = pdf.length;
+  pdf += "xref\n0 " + (objs.length + 1) + "\n0000000000 65535 f \n";
+  for(var i = 1; i <= objs.length; i++){
+    pdf += ("0000000000" + offsets[i]).slice(-10) + " 00000 n \n";
+  }
+  pdf += "trailer\n<< /Size " + (objs.length + 1) + " /Root 1 0 R >>\nstartxref\n" + xrefPos + "\n%%EOF";
+
+  var bytes = new Uint8Array(pdf.length);
+  for(var i = 0; i < pdf.length; i++) bytes[i] = pdf.charCodeAt(i) & 0xFF;
+  return bytes;
+};
+
+function makePdf(){
+  var PINK = [0.847, 0.106, 0.376], PINKD = [0.678, 0.078, 0.341];
+  var INK = [0.169, 0.133, 0.157], MUTED = [0.478, 0.392, 0.439], WHITE = [1, 1, 1];
+  var M = 48, maxW = PDF_W - M*2;
+  var doc = new MiniPDF();
+  var y = 0;
+
+  doc.addPage();
+
+  function newPageIfNeeded(need){
+    if(y + need > PDF_H - 56){ doc.addPage(); y = 60; }
+  }
+  function writeWrapped(text, x, width, size, font, color, lineH){
+    var lines = doc.wrap(text, size, font, width);
+    for(var i = 0; i < lines.length; i++){
+      newPageIfNeeded(lineH);
+      doc.text(lines[i], x, y, size, font, color);
+      y += lineH;
+    }
+  }
+
+  // header
+  doc.rect(M, 42, maxW, 64, PINK);
+  doc.text("JE&DA  |  Kuesioner Pengembangan Aplikasi", M+16, 70, 15, "F2", WHITE);
+  doc.text("Pure Fruits  -  No Sugar  -  No Preservatives", M+16, 92, 10, "F1", WHITE);
+  y = 130;
+
+  var nama = (answers["meta-nama"]||"").trim() || "(tidak diisi)";
+  var tgl = new Date().toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
+  writeWrapped("Pengisi  " + nama + "      Tanggal  " + tgl, M, maxW, 11, "F2", INK, 15);
+  writeWrapped("Terjawab  " + answeredCount() + " dari " + totalQuestions() + " pertanyaan", M, maxW, 10, "F1", MUTED, 14);
+  y += 6;
+
+  SECTIONS.forEach(function(s){
+    newPageIfNeeded(46);
+    y += 8;
+    doc.rect(M, y - 4, maxW, 21, PINKD);
+    doc.text(s.key + ".  " + s.title, M+10, y + 11, 11, "F2", WHITE);
+    y += 26;
+
+    s.qs.forEach(function(q){
+      var id = "q"+q.n, a;
+      if(q.type === "rank"){
+        var r = rankOrder[id]||[];
+        a = r.length ? r.map(function(v,i){ return (i+1)+") "+v; }).join("   ") : "";
+      } else {
+        a = (answers[id]||"").trim();
+      }
+      y += 4;
+      writeWrapped(q.n + ". " + q.t, M, maxW, 10, "F2", INK, 13);
+      y += 1;
+      if(a){
+        writeWrapped(a, M+14, maxW-14, 10, "F1", INK, 13);
+      } else {
+        writeWrapped("(tidak diisi)", M+14, maxW-14, 10, "F3", MUTED, 13);
+      }
+    });
+  });
+
+  // footer tiap halaman
+  var total = doc.pages.length;
+  for(var i = 0; i < total; i++){
+    doc.cur = doc.pages[i];
+    var label = "Kuesioner JE&DA  -  halaman " + (i+1) + " dari " + total;
+    var w = doc.textWidth(label, 8, "F1");
+    doc.text(label, (PDF_W - w)/2, PDF_H - 20, 8, "F1", MUTED);
+  }
+
+  var fname = "kuesioner-jeda-" + (nama !== "(tidak diisi)" ? nama.toLowerCase().replace(/[^a-z0-9]+/g,"-") : "jawaban") + ".pdf";
+  var blob = new Blob([doc.build()], { type: "application/pdf" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 3000);
+  showToast("PDF tersimpan. Cek folder Unduhan, lalu kirim lewat WhatsApp.");
+}
+
+document.getElementById("btnPDF").addEventListener("click", function(){
+  if(answeredCount() === 0){ showToast("Belum ada jawaban yang diisi."); return; }
+  try{ makePdf(); }catch(e){ showToast("Gagal membuat PDF. Coba tombol Salin sebagai cadangan."); }
+});
+
+document.getElementById("btnCopy").addEventListener("click", function(){
+  var text = buildText();
+  function done(){ showToast("Jawaban tersalin. Tempel di WhatsApp kalau tombol kirim bermasalah."); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+  } else { fallback(); }
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); done(); }catch(e){ showToast("Gagal menyalin."); }
+    document.body.removeChild(ta);
+  }
+});
+
+safeLoad();
+render();
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kuesioner Usaha Jus JE&amp;DA</title>
+<style>
+  :root{ --pink:#D81B60; --pink-dark:#AD1457; --pink-soft:#FCE4EC; --ink:#2B2228; --muted:#7A6470; --line:#E7C3D2; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{font-family:Helvetica,Arial,sans-serif; color:var(--ink); font-size:10.5pt; line-height:1.45;}
+  .page-header{
+    background:var(--pink); color:#fff; border-radius:10px;
+    padding:16px 20px; display:flex; align-items:center; gap:16px; margin-bottom:10px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .logo{border:2.5px solid #fff; border-radius:8px; padding:4px 10px; font-weight:800; font-size:15pt; letter-spacing:1px;}
+  .page-header h1{font-size:13.5pt;}
+  .page-header p{font-size:8.5pt; opacity:.92; margin-top:2px;}
+  .intro{
+    background:var(--pink-soft); border:1px solid var(--line); border-radius:8px;
+    padding:9px 12px; font-size:9pt; margin-bottom:10px;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .meta{display:flex; gap:24px; margin-bottom:6px; font-size:10pt;}
+  .meta .fld{flex:1; display:flex; align-items:flex-end; gap:8px;}
+  .meta .fld b{white-space:nowrap;}
+  .meta .fld .wline{flex:1; border-bottom:1px solid var(--ink); height:16px;}
+  .section{margin-top:12px;}
+  .sec-head{
+    background:var(--pink-dark); color:#fff; border-radius:6px; padding:5px 12px;
+    font-weight:700; font-size:11pt; display:flex; gap:10px; align-items:center;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    break-after:avoid; page-break-after:avoid;
+  }
+  .sec-head .k{background:#fff; color:var(--pink-dark); border-radius:4px; padding:0 7px; font-size:10pt;}
+  .q{margin:9px 2px 0; break-inside:avoid; page-break-inside:avoid;}
+  .q .qt{font-weight:600; margin-bottom:4px;}
+  .q .qt .n{color:var(--pink); font-weight:800; margin-right:3px;}
+  .lines .l{border-bottom:1px dotted #9c8390; height:19px;}
+  .opts{display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:2px;}
+  .opt{display:flex; align-items:center; gap:6px;}
+  .box{width:11px; height:11px; border:1.4px solid var(--ink); border-radius:2px; flex-shrink:0;}
+  .rank .opt{margin-top:4px;}
+  .rank .box{width:16px; height:16px; border-radius:3px;}
+  .rank-hint{font-size:8.5pt; color:var(--muted); margin-bottom:3px;}
+  .other{display:flex; align-items:flex-end; gap:6px; margin-top:4px;}
+  .other .wline{flex:1; border-bottom:1px dotted #9c8390; height:16px;}
+  .note{font-size:8.5pt; color:var(--muted); margin-top:2px;}
+  .pewawancara{margin-top:14px; border:1.4px solid var(--pink); border-radius:8px; padding:10px 12px; break-inside:avoid;}
+  .pewawancara h2{font-size:10.5pt; color:var(--pink-dark); margin-bottom:4px;}
+  .pewawancara p{font-size:8.5pt; color:var(--muted); margin-bottom:6px;}
+  .footer{margin-top:14px; text-align:center; font-size:8.5pt; color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="logo">JE&amp;DA</div>
+  <div>
+    <h1>Kuesioner Pengembangan Aplikasi Usaha Jus</h1>
+    <p>Pure Fruits &bull; No Sugar &bull; No Preservatives</p>
+  </div>
+</div>
+
+<div class="intro">
+  Kuesioner ini untuk merancang aplikasi pencatatan usaha. Isi santai saja, tidak ada jawaban salah,
+  jawaban boleh perkiraan. Kalau ada pertanyaan yang tidak cocok, lewati saja. Setelah selesai,
+  foto semua halaman lalu kirim lewat WhatsApp. Kalau bisa, foto juga 2 sd 3 halaman catatan manual yang sekarang dipakai.
+</div>
+
+<div class="meta">
+  <div class="fld"><b>Nama pengisi</b><div class="wline"></div></div>
+  <div class="fld"><b>Tanggal</b><div class="wline"></div></div>
+</div>
+
+<div id="content"></div>
+
+<div class="pewawancara">
+  <h2>Catatan Pewawancara</h2>
+  <p>Diisi oleh yang mewawancara setelah sesi selesai.</p>
+  <div class="q"><div class="qt"><span class="n">1.</span>Tiga masalah yang paling sering dikeluhkan</div><div class="lines" data-l="3"></div></div>
+  <div class="q"><div class="qt"><span class="n">2.</span>Perkiraan jumlah transaksi per hari</div><div class="lines" data-l="1"></div></div>
+  <div class="q"><div class="qt"><span class="n">3.</span>Kesiapan pakai aplikasi, lingkari salah satu&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;5</div></div>
+  <div class="q"><div class="qt"><span class="n">4.</span>Rekomendasi awal. Aplikasi kasir jadi cukup, atau perlu bikin sendiri? Kenapa?</div><div class="lines" data-l="3"></div></div>
+</div>
+
+<div class="footer">Kuesioner JE&amp;DA &bull; Juli 2026 &bull; Beri tanda bintang pada jawaban yang disebut sambil mengeluh, itu prioritas fitur</div>
+
+<script>
+var SECTIONS = [
+  {key:"A", title:"Profil Usaha", qs:[
+    {n:1,  t:"Sudah berapa lama jualan dan bagaimana ceritanya sampai bertahan setahun ini?", l:3},
+    {n:2,  t:"Jualan di mana saja sekarang? Lapak depan Toko Dirgantara saja atau ada titik lain?", l:2},
+    {n:3,  t:"Jualan berapa hari dalam seminggu? Jam berapa mulai persiapan sampai beres beres?", l:2},
+    {n:4,  t:"Siapa saja yang terlibat? Sendiri, dibantu keluarga, atau karyawan?", l:2},
+    {n:5,  t:"Selain jualan langsung di lapak, ada jalur lain? Pre order WhatsApp, titip jual, ojek online?", l:2},
+    {n:6,  t:"Setahun ke depan pengin usaha ini jadi seperti apa? Tambah titik jualan, masuk GoFood, punya karyawan, atau lainnya?", l:3}
+  ]},
+  {key:"B", title:"Produk dan Harga", qs:[
+    {n:7,  t:"Ada berapa jenis jus atau minuman yang dijual sekarang? Sebutkan semua beserta harganya.", l:4},
+    {n:8,  t:"Setiap produk ada berapa varian kemasan dan ukuran? Misal botol 250 ml dan cup.", l:2},
+    {n:9,  t:"Menu berubah ubah tiap hari atau tetap? Ada menu musiman tergantung buah?", l:2},
+    {n:10, t:"Produk mana yang paling laku? Produk mana yang menurutmu paling untung? Yakin atau hanya perasaan?", l:3},
+    {n:11, t:"Ada harga khusus? Misal beli banyak, harga reseller, atau promo.", l:2}
+  ]},
+  {key:"C", title:"Alur Jualan Harian", qs:[
+    {n:12, t:"Ceritakan alur satu hari jualan, dari belanja bahan sampai tutup lapak.", l:4},
+    {n:13, t:"Jus dibuat kapan?", type:"opts", opts:["Semua di awal hari","Saat ada pembeli","Campuran keduanya"]},
+    {n:14, t:"Rata rata berapa botol atau cup terjual per hari? Hari apa dan jam berapa paling ramai?", l:2},
+    {n:15, t:"Kalau jus tidak habis, sisanya diapakan? Kira kira berapa yang terbuang per hari atau per minggu?", l:2},
+    {n:16, t:"Pernah kehabisan produk saat masih ramai pembeli? Seberapa sering?", l:2}
+  ]},
+  {key:"D", title:"Pencatatan Sekarang", qs:[
+    {n:17, t:"Apa saja yang dicatat sekarang dan pakai apa? Buku tulis, HP, atau ingatan saja?", l:2},
+    {n:18, t:"Kapan mencatatnya? Setiap transaksi, tiap sore, atau kalau sempat?", l:2},
+    {n:19, t:"Boleh difoto catatannya? Fotonya nanti dikirim bersama kuesioner ini.", type:"opts", opts:["Boleh","Tidak"]},
+    {n:20, t:"Apa yang paling sering lupa atau salah catat?", l:2},
+    {n:21, t:"Apa yang paling bikin repot atau kesal dari cara mencatat sekarang?", l:2},
+    {n:22, t:"Sekarang tahu tidak untung bersih per hari atau per bulan? Kalau tahu, bagaimana menghitungnya?", l:2},
+    {n:23, t:"Pernah tidak uangnya terasa kurang padahal jualan ramai? Menurutmu larinya ke mana?", l:2}
+  ]},
+  {key:"E", title:"Bahan Baku dan Belanja", qs:[
+    {n:24, t:"Bahan apa saja yang dibelanjakan rutin? Buah, susu, kurma, es, botol, cup, sedotan, stiker.", l:3},
+    {n:25, t:"Belanja di mana dan seberapa sering? Harian, dua hari sekali, mingguan?", l:2},
+    {n:26, t:"Bagaimana menentukan jumlah belanja? Perasaan, catatan, atau kebiasaan?", l:2},
+    {n:27, t:"Tahu tidak biaya bahan untuk membuat 1 botol jus tertentu? Misal 1 botol Kurma Susu.", l:2},
+    {n:28, t:"Kalau harga bahan naik, harga jual ikut disesuaikan atau tidak?", l:2}
+  ]},
+  {key:"F", title:"Pembayaran dan Uang", qs:[
+    {n:29, t:"Pembeli bayar pakai apa saja? Kira kira berapa persen tunai dan berapa persen QRIS?", l:2},
+    {n:30, t:"QRIS pakai aplikasi apa dan uangnya masuk ke rekening siapa?", l:2},
+    {n:31, t:"Uang usaha dan uang pribadi bagaimana?", type:"opts", opts:["Terpisah","Campur"]},
+    {n:32, t:"Ada utang piutang? Misal pelanggan bayar belakangan atau bon ke pemasok.", l:2},
+    {n:33, t:"Ada setoran, cicilan, atau kewajiban rutin lain yang harus diperhitungkan?", l:2}
+  ]},
+  {key:"G", title:"Pelanggan", qs:[
+    {n:34, t:"Kira kira berapa pelanggan tetap yang hampir tiap hari atau tiap minggu beli?", l:2},
+    {n:35, t:"Ada pelanggan yang pesan lewat WhatsApp dulu? Seberapa sering?", l:2},
+    {n:36, t:"Pernah kepikiran bikin sistem langganan? Misal paket seminggu 5 botol.", l:2},
+    {n:37, t:"Pelanggan paling sering tanya apa? Stok rasa hari ini, bisa antar atau tidak, atau lainnya?", l:2}
+  ]},
+  {key:"H", title:"HP dan Kebiasaan Teknologi", qs:[
+    {n:38, t:"HP yang dipakai sehari hari apa? Merek, umur kira kira, memori sering penuh atau tidak?", l:2},
+    {n:39, t:"Aplikasi apa yang paling sering dipakai? WhatsApp, Instagram, TikTok, mobile banking?", l:2},
+    {n:40, t:"Sinyal internet di lokasi lapak bagaimana?", type:"opts", opts:["Lancar","Kadang hilang","Sering hilang"]},
+    {n:41, t:"Pernah coba aplikasi kasir atau pencatatan seperti Kasir Pintar atau BukuWarung? Kalau pernah lalu berhenti, kenapa?", l:2},
+    {n:42, t:"Kalau ada aplikasi baru, lebih suka bagaimana?", type:"opts", opts:["Belajar sendiri","Diajari langsung"]}
+  ]},
+  {key:"I", title:"Harapan Terhadap Aplikasi", qs:[
+    {n:43, t:"Kalau ada satu hal saja yang bisa dibereskan aplikasi ini, pengin itu apa?", l:2},
+    {n:44, t:"Pilih 3 yang paling dibutuhkan. Tulis angka 1, 2, 3 di dalam kotak. Angka 1 berarti paling penting.", type:"rank", opts:[
+      "Catat penjualan cepat",
+      "Tahu untung bersih harian",
+      "Tahu produk mana yang paling menguntungkan",
+      "Ingat stok bahan dan kapan harus belanja",
+      "Catat pesanan pre order pelanggan",
+      "Rekap otomatis buat evaluasi bulanan",
+      "Data pelanggan buat promo"
+    ]},
+    {n:45, t:"Siapa saja yang nanti akan pakai aplikasinya?", l:2},
+    {n:46, t:"Ada kekhawatiran soal pakai aplikasi? Takut ribet, takut data hilang, atau lainnya?", l:2},
+    {n:47, t:"Bersedia tidak seminggu pertama mencatat dobel, di aplikasi dan di buku, supaya aplikasinya bisa dicek benar?", type:"opts", opts:["Bersedia","Tidak"]}
+  ]}
+];
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+var html = "";
+SECTIONS.forEach(function(s){
+  html += '<div class="section">';
+  html += '<div class="sec-head"><span class="k">'+s.key+'</span>'+esc(s.title)+'</div>';
+  s.qs.forEach(function(q){
+    html += '<div class="q'+(q.type==="rank"?' rank':'')+'"><div class="qt"><span class="n">'+q.n+'.</span>'+esc(q.t)+'</div>';
+    if(q.type === "opts"){
+      html += '<div class="opts">';
+      q.opts.forEach(function(o){ html += '<div class="opt"><span class="box"></span>'+esc(o)+'</div>'; });
+      html += '</div>';
+    } else if(q.type === "rank"){
+      q.opts.forEach(function(o){ html += '<div class="opt"><span class="box"></span>'+esc(o)+'</div>'; });
+    } else {
+      html += '<div class="lines">';
+      for(var i=0;i<(q.l||2);i++) html += '<div class="l"></div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+});
+document.getElementById("content").innerHTML = html;
+
+// render pewawancara lines
+document.querySelectorAll(".pewawancara .lines").forEach(function(el){
+  var n = parseInt(el.getAttribute("data-l")||"2",10), h="";
+  for(var i=0;i<n;i++) h += '<div class="l"></div>';
+  el.innerHTML = h;
+});
+</script>
+</body>
+</html>
