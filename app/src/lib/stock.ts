@@ -60,3 +60,52 @@ export async function deleteSale(saleId: string): Promise<void> {
   const { error } = await supabase.rpc('undo_sale', { p_sale_id: saleId })
   if (error) throw error
 }
+
+export type IngredientWarning = {
+  name: string
+  unit: string
+  qty_after: number
+}
+
+export type ProductionItemInput = {
+  variantId: string
+  qty: number
+}
+
+/** Catat batch produksi: stok jadi bertambah, stok bahan berkurang sesuai resep. */
+export async function recordProduction(input: {
+  batchDate: string // YYYY-MM-DD (WIB)
+  note: string | null
+  items: ProductionItemInput[]
+}): Promise<{ batchId: string; ingredientWarnings: IngredientWarning[] }> {
+  const { data, error } = await supabase.rpc('record_production', {
+    p_batch_date: input.batchDate,
+    p_note: input.note,
+    p_items: input.items.map((i) => ({ variant_id: i.variantId, qty: i.qty })),
+  })
+  if (error) throw error
+  return { batchId: data.batch_id, ingredientWarnings: data.ingredient_warnings ?? [] }
+}
+
+/** Koreksi stok bahan ke nilai baru (kind 'adjustment'). */
+export async function adjustIngredientStock(ingredientId: string, newQty: number): Promise<void> {
+  const { error } = await supabase.rpc('adjust_ingredient_stock', {
+    p_ingredient_id: ingredientId,
+    p_new_qty: newQty,
+  })
+  if (error) throw error
+}
+
+/** Tandai botol jadi rusak (spoilage) atau dibagikan (giveaway). */
+export async function writeOffFinished(
+  variantId: string,
+  qty: number,
+  kind: 'spoilage' | 'giveaway',
+): Promise<void> {
+  const { error } = await supabase.rpc('write_off_finished', {
+    p_variant_id: variantId,
+    p_qty: qty,
+    p_kind: kind,
+  })
+  if (error) throw error
+}
