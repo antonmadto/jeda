@@ -7,6 +7,7 @@ import { recordSale } from '../lib/stock'
 import type { StockWarning } from '../lib/stock'
 import { dayOfWeekWIB } from '../lib/date'
 import { useCartStore } from '../store/cart'
+import { useReceivablesStore } from '../store/receivables'
 import ChannelTabs from '../components/jual/ChannelTabs'
 import ProductGrid from '../components/jual/ProductGrid'
 import CartBar from '../components/jual/CartBar'
@@ -26,6 +27,7 @@ export default function JualPage() {
 
   const { channel, lines, editingSaleId, setChannel, addOne, setQty, clear, loadForEdit } =
     useCartStore()
+  const refreshReceivables = useReceivablesStore((s) => s.refresh)
 
   useEffect(() => {
     fetchCatalog()
@@ -78,6 +80,7 @@ export default function JualPage() {
       clear()
       setSheetOpen(false)
       setRefreshKey((k) => k + 1)
+      refreshReceivables()
       setSavedFlash(true)
       setTimeout(() => setSavedFlash(false), 2500)
     } catch {

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import type { ReactNode } from 'react'
+import { useReceivablesStore } from '../store/receivables'
 
 const tabs: { to: string; label: string; icon: ReactNode }[] = [
   {
@@ -50,27 +51,41 @@ const tabs: { to: string; label: string; icon: ReactNode }[] = [
 ]
 
 export default function BottomNav() {
+  const receivablesCount = useReceivablesStore((s) => s.count)
   return (
     <nav
       aria-label="Navigasi utama"
       className="fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="grid grid-cols-4">
-        {tabs.map((tab) => (
-          <li key={tab.to}>
-            <NavLink
-              to={tab.to}
-              className={({ isActive }) =>
-                `flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-medium ${
-                  isActive ? 'text-brand' : 'text-gray-500'
-                }`
-              }
-            >
-              {tab.icon}
-              {tab.label}
-            </NavLink>
-          </li>
-        ))}
+        {tabs.map((tab) => {
+          const badge = tab.to === '/lainnya' && receivablesCount > 0 ? receivablesCount : 0
+          return (
+            <li key={tab.to}>
+              <NavLink
+                to={tab.to}
+                className={({ isActive }) =>
+                  `relative flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-medium ${
+                    isActive ? 'text-brand' : 'text-gray-500'
+                  }`
+                }
+              >
+                <span className="relative">
+                  {tab.icon}
+                  {badge > 0 && (
+                    <span
+                      aria-label={`${badge} piutang`}
+                      className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white"
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </span>
+                {tab.label}
+              </NavLink>
+            </li>
+          )
+        })}
       </ul>
     </nav>
   )

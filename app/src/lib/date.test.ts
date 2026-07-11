@@ -20,3 +20,10 @@ test('dayOfWeekWIB mengembalikan 0=Minggu sampai 6=Sabtu menurut WIB', () => {
 test('formatDateWIB menampilkan tanggal berbahasa Indonesia', () => {
   expect(formatDateWIB('2026-07-11')).toBe('Sabtu, 11 Juli 2026')
 })
+
+test('formatDateWIB menerima timestamp ISO lengkap (bukan hanya YYYY-MM-DD)', () => {
+  // 2026-07-11 18.49 UTC = 2026-07-12 01.49 WIB → Minggu, 12 Juli 2026
+  expect(formatDateWIB('2026-07-11T18:49:55.123Z')).toBe('Minggu, 12 Juli 2026')
+  // sore WIB tetap di hari yang sama
+  expect(formatDateWIB('2026-07-11T05:00:00.000Z')).toBe('Sabtu, 11 Juli 2026')
+})

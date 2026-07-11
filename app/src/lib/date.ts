@@ -78,9 +78,15 @@ export function formatTimeWIB(date: Date | string): string {
   }).format(d)
 }
 
-/** Format tanggal untuk tampilan, contoh "Sabtu, 11 Juli 2026". */
+/**
+ * Format tanggal untuk tampilan, contoh "Sabtu, 11 Juli 2026".
+ * Menerima tanggal ("YYYY-MM-DD", dianggap WIB) maupun timestamp ISO lengkap.
+ */
 export function formatDateWIB(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(`${date}T00:00:00+07:00`) : date
+  const d =
+    typeof date === 'string'
+      ? new Date(date.includes('T') ? date : `${date}T00:00:00+07:00`)
+      : date
   return new Intl.DateTimeFormat('id-ID', {
     timeZone: WIB,
     weekday: 'long',
