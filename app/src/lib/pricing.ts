@@ -18,6 +18,11 @@ export type Channel = 'lapak' | 'cfd' | 'online' | 'bulk'
 export type Category = 'fresh' | 'creamy' | 'ramu'
 export type PromoName = 'jumat_berkah' | 'sabtu_ceria'
 
+export const PROMO_LABELS: Record<PromoName, string> = {
+  jumat_berkah: 'Jumat Berkah',
+  sabtu_ceria: 'Sabtu Ceria',
+}
+
 export type CartItem = {
   variantId: string
   category: Category

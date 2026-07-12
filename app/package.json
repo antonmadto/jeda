@@ -17,6 +17,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",
+    "write-excel-file": "^4.1.1",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "@vitest/ui": "^4.1.10",
     "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
+    "read-excel-file": "^9.3.1",
     "tailwindcss": "^4.3.2",
     "typescript": "~6.0.2",
     "vite": "^8.1.1",

@@ -1,14 +1,14 @@
-import { toPng } from 'html-to-image'
-
 /**
  * Render sebuah node jadi PNG lalu bagikan lewat Web Share API (WhatsApp dll).
  * Fallback: unduh gambar. Mengembalikan 'shared' | 'downloaded'.
+ * html-to-image di-import lazy agar tidak membebani bundle utama.
  */
 export async function shareNodeAsPng(
   node: HTMLElement,
   filename: string,
   shareTitle: string,
 ): Promise<'shared' | 'downloaded'> {
+  const { toPng } = await import('html-to-image')
   const dataUrl = await toPng(node, {
     pixelRatio: 2,
     cacheBust: true,

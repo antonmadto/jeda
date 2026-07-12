@@ -40,9 +40,16 @@ export default function LainnyaPage() {
         </Link>
         <Link
           to="/lainnya/pelanggan"
-          className="flex min-h-14 items-center justify-between px-4 py-3"
+          className="flex min-h-14 items-center justify-between border-b border-gray-100 px-4 py-3"
         >
           <span className="font-medium text-gray-900">Pelanggan</span>
+          <span className="text-gray-400">›</span>
+        </Link>
+        <Link
+          to="/lainnya/ekspor"
+          className="flex min-h-14 items-center justify-between px-4 py-3"
+        >
+          <span className="font-medium text-gray-900">Ekspor Data (Excel)</span>
           <span className="text-gray-400">›</span>
         </Link>
       </div>
