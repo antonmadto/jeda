@@ -10,8 +10,9 @@ import { afterAll, expect, test } from 'vitest'
 
 declare const process: { env: Record<string, string | undefined> }
 
-const url = import.meta.env.VITE_SUPABASE_URL
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY
+// E2E_SUPABASE_* mengarahkan test ke project khusus test; tanpa itu memakai .env.local
+const url = process.env.E2E_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL
+const key = process.env.E2E_SUPABASE_ANON_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
 const enabled = Boolean(url && key && email && password)
