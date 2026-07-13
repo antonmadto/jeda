@@ -21,48 +21,53 @@ export default function LainnyaPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold text-gray-900">Lainnya</h2>
+      <h2 className="text-[22px] font-extrabold tracking-[-.01em] text-ink">Lainnya</h2>
 
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[20px] bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]">
         <Link
           to="/lainnya/piutang"
-          className="flex min-h-14 items-center justify-between border-b border-gray-100 px-4 py-3"
+          className="flex h-[58px] items-center justify-between border-b border-line px-[18px]"
         >
-          <span className="font-medium text-gray-900">Piutang</span>
+          <span className="font-bold text-ink">Piutang</span>
           <span className="flex items-center gap-2">
             {receivablesCount > 0 && (
-              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-bold text-white">
+              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-xs font-bold text-white">
                 {receivablesCount}
               </span>
             )}
-            <span className="text-gray-400">›</span>
+            <span className="text-[#C4B1BA]">›</span>
           </span>
         </Link>
         <Link
           to="/lainnya/pelanggan"
-          className="flex min-h-14 items-center justify-between border-b border-gray-100 px-4 py-3"
+          className="flex h-[58px] items-center justify-between border-b border-line px-[18px]"
         >
-          <span className="font-medium text-gray-900">Pelanggan</span>
-          <span className="text-gray-400">›</span>
+          <span className="font-bold text-ink">Pelanggan</span>
+          <span className="text-[#C4B1BA]">›</span>
         </Link>
         <Link
           to="/lainnya/ekspor"
-          className="flex min-h-14 items-center justify-between px-4 py-3"
+          className="flex h-[58px] items-center justify-between px-[18px]"
         >
-          <span className="font-medium text-gray-900">Ekspor Data (Excel)</span>
-          <span className="text-gray-400">›</span>
+          <span className="font-bold text-ink">Ekspor Data (Excel)</span>
+          <span className="text-[#C4B1BA]">›</span>
         </Link>
       </div>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
-        <p className="text-sm text-gray-500">Masuk sebagai</p>
-        <p className="font-medium text-gray-900">{email ?? '—'}</p>
+      <div className="flex items-center gap-3 rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-light font-extrabold text-brand">
+          {(email ?? '—').charAt(0).toUpperCase()}
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm text-muted">Masuk sebagai</p>
+          <p className="truncate font-bold text-ink">{email ?? '—'}</p>
+        </div>
       </div>
 
       <button
         type="button"
         onClick={handleLogout}
-        className="h-12 rounded-lg border border-gray-300 bg-white font-semibold text-gray-700 active:bg-gray-100"
+        className="h-[50px] rounded-2xl bg-tint font-bold text-tint-ink active:bg-tint-dark"
       >
         Keluar
       </button>

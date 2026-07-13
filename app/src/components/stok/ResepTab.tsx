@@ -73,8 +73,8 @@ export default function ResepTab() {
     if (!error && data) setLines((ls) => [...ls, data as RecipeLineRow])
   }
 
-  if (status === 'loading') return <p className="text-gray-500">Memuat…</p>
-  if (status === 'error') return <p className="text-red-600">Gagal memuat data resep.</p>
+  if (status === 'loading') return <p className="text-muted">Memuat…</p>
+  if (status === 'error') return <p className="text-danger">Gagal memuat data resep.</p>
 
   const categories = (['fresh', 'creamy', 'ramu'] as Category[]).filter((c) =>
     variants.some((v) => v.category === c),
@@ -82,12 +82,14 @@ export default function ResepTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium text-gray-700">Varian produk</span>
+      <label className="flex flex-col gap-1.5 text-sm">
+        <span className="text-[11px] font-extrabold tracking-[.09em] text-label uppercase">
+          Varian produk
+        </span>
         <select
           value={variantId}
           onChange={(e) => setVariantId(e.target.value)}
-          className="h-12 rounded-lg border border-gray-300 bg-white px-3"
+          className="h-[50px] rounded-[14px] border-[1.5px] border-border-soft bg-white px-3 text-[14.5px] font-bold text-ink"
         >
           <option value="">— Pilih varian —</option>
           {categories.map((c) => (
@@ -106,21 +108,21 @@ export default function ResepTab() {
 
       {variant && lineStatus === 'idle' && (
         <>
-          <section className="rounded-xl bg-white p-4 shadow-sm">
-            <h2 className="mb-2 font-bold text-gray-900">Resep per 1 botol</h2>
+          <section className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+            <h2 className="mb-2 text-base font-extrabold text-ink">Resep per 1 botol</h2>
             {lines.length === 0 && (
-              <p className="mb-2 text-sm text-gray-400">Belum ada bahan di resep ini.</p>
+              <p className="mb-2 text-[13.5px] text-faint">Belum ada bahan di resep ini.</p>
             )}
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-line">
               {lines.map((l) => {
                 const ing = ingredientById[l.ingredient_id]
                 return (
                   <li key={l.id} className="flex items-center gap-2 py-2">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-gray-900">
+                      <p className="truncate text-[14.5px] font-bold text-ink">
                         {ing?.name ?? '—'}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs font-medium text-muted">
                         {formatRupiah(Math.round(l.qty * (ing?.cost_per_unit ?? 0)))}
                       </p>
                     </div>
@@ -131,14 +133,14 @@ export default function ResepTab() {
                       aria-label={`Kuantitas ${ing?.name ?? ''}`}
                       value={l.qty}
                       onChange={(e) => updateQty(l, parseInt(e.target.value, 10) || 0)}
-                      className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+                      className="h-11 w-20 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink"
                     />
-                    <span className="w-10 text-xs text-gray-500">{ing?.unit}</span>
+                    <span className="w-10 text-xs font-medium text-muted">{ing?.unit}</span>
                     <button
                       type="button"
                       aria-label={`Hapus ${ing?.name ?? ''} dari resep`}
                       onClick={() => removeLine(l)}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-red-200 text-red-600"
+                      className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-danger-tint text-danger"
                     >
                       ×
                     </button>
@@ -154,22 +156,22 @@ export default function ResepTab() {
             />
           </section>
 
-          <section className="rounded-xl bg-brand-light p-4">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-700">HPP per botol</span>
-              <span className="font-bold text-gray-900" data-testid="hpp-value">
+          <section className="rounded-[20px] bg-brand-light p-4">
+            <div className="flex justify-between text-[13.5px]">
+              <span className="font-medium text-tint-ink">HPP per botol</span>
+              <span className="font-extrabold text-ink" data-testid="hpp-value">
                 {formatRupiah(hpp)}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-700">Harga jual</span>
-              <span className="font-bold text-gray-900">{formatRupiah(variant.price)}</span>
+            <div className="flex justify-between text-[13.5px]">
+              <span className="font-medium text-tint-ink">Harga jual</span>
+              <span className="font-extrabold text-ink">{formatRupiah(variant.price)}</span>
             </div>
             {margin && (
-              <div className="mt-1 flex justify-between border-t border-white pt-1 text-sm">
-                <span className="text-gray-700">Laba kotor / botol</span>
+              <div className="mt-1.5 flex justify-between border-t-[1.5px] border-white pt-1.5 text-[13.5px]">
+                <span className="font-medium text-tint-ink">Laba kotor / botol</span>
                 <span
-                  className={`font-bold ${margin.profit < 0 ? 'text-red-600' : 'text-green-700'}`}
+                  className={`font-extrabold ${margin.profit < 0 ? 'text-danger' : 'text-money-dark'}`}
                 >
                   {formatRupiah(margin.profit)} ({margin.marginPct.toFixed(1)}%)
                 </span>
@@ -196,12 +198,12 @@ function AddLineForm({
   const selected = ingredients.find((i) => i.id === ingredientId)
 
   return (
-    <div className="mt-2 flex items-center gap-2 border-t border-gray-100 pt-3">
+    <div className="mt-2 flex items-center gap-2 border-t border-line pt-3">
       <select
         aria-label="Pilih bahan"
         value={ingredientId}
         onChange={(e) => setIngredientId(e.target.value)}
-        className="h-11 min-w-0 flex-1 rounded-lg border border-gray-300 bg-white px-2 text-sm"
+        className="h-11 min-w-0 flex-1 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-[13.5px] font-medium text-ink"
       >
         <option value="">+ Tambah bahan…</option>
         {ingredients.map((i) => (
@@ -218,9 +220,9 @@ function AddLineForm({
         aria-label="Kuantitas bahan baru"
         value={qty}
         onChange={(e) => setQty(e.target.value)}
-        className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+        className="h-11 w-20 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink placeholder:text-faint"
       />
-      <span className="w-10 text-xs text-gray-500">{selected?.unit ?? ''}</span>
+      <span className="w-10 text-xs font-medium text-muted">{selected?.unit ?? ''}</span>
       <button
         type="button"
         disabled={!ingredientId || !(parseInt(qty, 10) > 0)}
@@ -229,7 +231,7 @@ function AddLineForm({
           setIngredientId('')
           setQty('')
         }}
-        className="h-11 rounded-lg bg-brand px-3 text-sm font-bold text-white disabled:opacity-50"
+        className="h-11 rounded-[12px] bg-brand px-3 text-[13.5px] font-extrabold text-white active:bg-brand-dark disabled:opacity-50"
       >
         OK
       </button>

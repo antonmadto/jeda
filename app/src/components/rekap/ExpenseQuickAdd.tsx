@@ -57,18 +57,18 @@ export default function ExpenseQuickAdd({
   }
 
   return (
-    <section className="rounded-xl bg-white p-4 shadow-sm">
-      <h2 className="mb-2 font-bold text-gray-900">Pengeluaran Hari Ini</h2>
+    <section className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+      <h2 className="mb-3 text-base font-extrabold text-ink">Pengeluaran Hari Ini</h2>
 
-      <div className="mb-2 flex flex-wrap gap-1.5">
+      <div className="mb-3 flex flex-wrap gap-1.5">
         {EXPENSE_CATEGORIES.map((c) => (
           <button
             key={c.key}
             type="button"
             aria-pressed={category === c.key}
             onClick={() => setCategory(c.key)}
-            className={`h-9 rounded-full px-3 text-sm font-medium ${
-              category === c.key ? 'bg-brand text-white' : 'bg-gray-100 text-gray-700'
+            className={`h-[38px] rounded-full px-3.5 text-[13px] font-bold ${
+              category === c.key ? 'bg-brand text-white' : 'bg-tint text-tint-ink active:bg-tint-dark'
             }`}
           >
             {c.label}
@@ -84,13 +84,13 @@ export default function ExpenseQuickAdd({
           aria-label="Jumlah pengeluaran"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="h-12 min-w-0 flex-1 rounded-lg border border-gray-300 px-3"
+          className="h-12 min-w-0 flex-1 rounded-[14px] border-[1.5px] border-border-soft bg-white px-3 text-ink placeholder:text-faint"
         />
         <button
           type="button"
           disabled={saving || !(parseInt(amount, 10) > 0)}
           onClick={save}
-          className="h-12 rounded-lg bg-brand px-5 font-bold text-white disabled:opacity-50"
+          className="h-12 rounded-[14px] bg-brand px-5 font-extrabold text-white shadow-[0_6px_16px_rgba(226,81,126,.28)] active:bg-brand-dark disabled:opacity-50 disabled:shadow-none"
         >
           Tambah
         </button>
@@ -100,23 +100,23 @@ export default function ExpenseQuickAdd({
         placeholder="Catatan (opsional)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+        className="mt-2 h-11 w-full rounded-[14px] border-[1.5px] border-border-soft bg-white px-3 text-sm text-ink placeholder:text-faint"
       />
 
       {rows.length > 0 && (
-        <ul className="mt-3 divide-y divide-gray-100">
+        <ul className="mt-3 divide-y divide-line">
           {rows.map((r) => (
-            <li key={r.id} className="flex items-center justify-between gap-2 py-2 text-sm">
+            <li key={r.id} className="flex items-center justify-between gap-2 py-2 text-[13.5px]">
               <div className="min-w-0 flex-1">
-                <span className="font-medium text-gray-900">{CATEGORY_LABELS[r.category]}</span>
-                {r.note && <span className="text-gray-500"> · {r.note}</span>}
+                <span className="font-semibold text-ink">{CATEGORY_LABELS[r.category]}</span>
+                {r.note && <span className="text-muted"> · {r.note}</span>}
               </div>
-              <span className="font-semibold text-gray-900">{formatRupiah(r.amount)}</span>
+              <span className="font-bold text-ink">{formatRupiah(r.amount)}</span>
               <button
                 type="button"
                 aria-label={`Hapus pengeluaran ${CATEGORY_LABELS[r.category]}`}
                 onClick={() => remove(r.id)}
-                className="flex h-11 w-11 items-center justify-center rounded-lg border border-red-200 text-red-600"
+                className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-danger-tint text-lg text-danger"
               >
                 ×
               </button>

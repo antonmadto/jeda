@@ -83,12 +83,12 @@ export default function BelanjaTab() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank')
   }
 
-  if (status === 'loading') return <p className="text-gray-500">Memuat…</p>
-  if (status === 'error') return <p className="text-red-600">Gagal memuat data belanja.</p>
+  if (status === 'loading') return <p className="text-muted">Memuat…</p>
+  if (status === 'error') return <p className="text-danger">Gagal memuat data belanja.</p>
 
   if (variantsWithRecipe.length === 0) {
     return (
-      <p className="rounded-xl bg-white px-4 py-6 text-center text-sm text-gray-500 shadow-sm">
+      <p className="rounded-[20px] bg-white px-4 py-6 text-center text-[13.5px] text-muted shadow-[0_2px_10px_rgba(160,60,95,.07)]">
         Belum ada varian yang punya resep. Isi resep dulu di tab Resep supaya kebutuhan belanja
         bisa dihitung.
       </p>
@@ -97,17 +97,17 @@ export default function BelanjaTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-1 font-bold text-gray-900">Rencana produksi berikutnya</h2>
-        <p className="mb-2 text-xs text-gray-500">
+      <section className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+        <h2 className="mb-1 text-base font-extrabold text-ink">Rencana produksi berikutnya</h2>
+        <p className="mb-2 text-xs font-medium text-muted">
           Hanya varian yang punya resep yang ikut dihitung.
         </p>
         {variantsWithRecipe.map((v) => (
           <label
             key={v.variantId}
-            className="flex min-h-11 items-center justify-between gap-2 text-sm"
+            className="flex min-h-11 items-center justify-between gap-2 text-[13.5px]"
           >
-            <span className="text-gray-800">{v.label}</span>
+            <span className="font-medium text-ink">{v.label}</span>
             <div className="flex items-center gap-1">
               <input
                 type="number"
@@ -116,44 +116,47 @@ export default function BelanjaTab() {
                 aria-label={`Target ${v.label}`}
                 value={plan[v.variantId] ?? ''}
                 onChange={(e) => setPlan((m) => ({ ...m, [v.variantId]: e.target.value }))}
-                className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+                className="h-11 w-20 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink"
               />
-              <span className="text-xs text-gray-500">botol</span>
+              <span className="text-xs font-medium text-muted">botol</span>
             </div>
           </label>
         ))}
-        <p className="mt-2 border-t border-gray-100 pt-2 text-right text-sm font-semibold text-gray-900">
+        <p className="mt-2 border-t border-line pt-2 text-right text-[13.5px] font-extrabold text-ink">
           Target total: {totalBottles} botol
         </p>
       </section>
 
-      <section className="rounded-xl bg-white p-4 shadow-sm" aria-label="Daftar belanja">
-        <h2 className="mb-2 font-bold text-gray-900">Daftar Belanja</h2>
+      <section
+        className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]"
+        aria-label="Daftar belanja"
+      >
+        <h2 className="mb-2 text-base font-extrabold text-ink">Daftar Belanja</h2>
         {list.length === 0 ? (
-          <p className="text-sm text-gray-400">Isi target produksi untuk menghitung.</p>
+          <p className="text-[13.5px] text-faint">Isi target produksi untuk menghitung.</p>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-[13.5px]">
             <thead>
-              <tr className="text-left text-xs text-gray-500 uppercase">
-                <th className="py-1 font-semibold">Bahan</th>
-                <th className="py-1 text-right font-semibold">Butuh</th>
-                <th className="py-1 text-right font-semibold">Stok</th>
-                <th className="py-1 text-right font-semibold">Beli</th>
+              <tr className="text-left text-[11px] font-extrabold tracking-[.09em] text-label uppercase">
+                <th className="py-1 font-extrabold">Bahan</th>
+                <th className="py-1 text-right font-extrabold">Butuh</th>
+                <th className="py-1 text-right font-extrabold">Stok</th>
+                <th className="py-1 text-right font-extrabold">Beli</th>
               </tr>
             </thead>
             <tbody>
               {list.map((l) => (
-                <tr key={l.ingredientId} className="border-t border-gray-100">
-                  <td className="py-1.5 font-medium text-gray-900">{l.name}</td>
-                  <td className="py-1.5 text-right text-gray-600">
+                <tr key={l.ingredientId} className="border-t border-line">
+                  <td className="py-1.5 font-bold text-ink">{l.name}</td>
+                  <td className="py-1.5 text-right font-medium text-ink-2">
                     {l.needed.toLocaleString('id-ID')} {l.unit}
                   </td>
-                  <td className="py-1.5 text-right text-gray-600">
+                  <td className="py-1.5 text-right font-medium text-ink-2">
                     {l.inStock.toLocaleString('id-ID')}
                   </td>
                   <td
-                    className={`py-1.5 text-right font-bold ${
-                      l.toBuy > 0 ? 'text-brand-dark' : 'text-gray-400'
+                    className={`py-1.5 text-right font-extrabold ${
+                      l.toBuy > 0 ? 'text-brand' : 'text-faint'
                     }`}
                   >
                     {l.toBuy > 0 ? `${l.toBuy.toLocaleString('id-ID')} ${l.unit}` : '—'}
@@ -166,7 +169,10 @@ export default function BelanjaTab() {
       </section>
 
       {copied && (
-        <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+        <p
+          role="status"
+          className="rounded-[14px] bg-money-tint px-3 py-2 text-[13.5px] font-bold text-money-dark"
+        >
           Daftar tersalin — tinggal tempel di WhatsApp ✓
         </p>
       )}
@@ -174,7 +180,7 @@ export default function BelanjaTab() {
         type="button"
         disabled={list.length === 0}
         onClick={share}
-        className="h-13 rounded-xl bg-green-600 text-base font-bold text-white active:bg-green-700 disabled:opacity-50"
+        className="h-[54px] rounded-2xl bg-money text-base font-extrabold text-white shadow-[0_6px_16px_rgba(46,155,104,.25)] active:bg-money-dark disabled:opacity-50"
       >
         Bagikan ke WhatsApp
       </button>

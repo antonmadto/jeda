@@ -3,6 +3,18 @@ import { CATEGORY_LABELS } from '../../lib/catalog'
 import type { Category } from '../../lib/pricing'
 import { formatRupiah } from '../../lib/format'
 
+const CATEGORY_DOT: Record<Category, string> = {
+  fresh: 'bg-money',
+  creamy: 'bg-cat-creamy-ink',
+  ramu: 'bg-cat-ramu-ink',
+}
+
+const CATEGORY_INITIAL: Record<Category, string> = {
+  fresh: 'bg-cat-fresh text-cat-fresh-ink',
+  creamy: 'bg-cat-creamy text-cat-creamy-ink',
+  ramu: 'bg-cat-ramu text-cat-ramu-ink',
+}
+
 export default function ProductGrid({
   variants,
   qtyByVariant,
@@ -20,10 +32,14 @@ export default function ProductGrid({
     <div className="flex flex-col gap-5">
       {categories.map((category) => (
         <div key={category}>
-          <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+          <h2 className="mb-2 flex items-center gap-2 text-xs font-extrabold tracking-[.09em] text-label uppercase">
+            <span
+              aria-hidden="true"
+              className={`h-2 w-2 shrink-0 rounded-full ${CATEGORY_DOT[category]}`}
+            />
             {CATEGORY_LABELS[category]}
           </h2>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {variants
               .filter((v) => v.category === category)
               .map((v) => {
@@ -34,8 +50,10 @@ export default function ProductGrid({
                     type="button"
                     aria-label={v.label}
                     onClick={() => onTap(v.variantId)}
-                    className={`relative flex min-h-16 items-center gap-2.5 rounded-xl px-2.5 py-2 text-left shadow-sm active:scale-95 ${
-                      qty > 0 ? 'bg-brand-light ring-2 ring-brand' : 'bg-white'
+                    className={`relative flex min-h-[66px] items-center gap-2.5 overflow-visible rounded-[18px] border-[1.5px] px-[11px] py-[9px] text-left active:scale-95 ${
+                      qty > 0
+                        ? 'border-brand bg-brand-light shadow-[0_4px_12px_rgba(226,81,126,.18)]'
+                        : 'border-transparent bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]'
                     }`}
                   >
                     {v.imageUrl ? (
@@ -43,26 +61,26 @@ export default function ProductGrid({
                         src={v.imageUrl}
                         alt=""
                         loading="lazy"
-                        className="h-11 w-11 shrink-0 rounded-lg object-cover"
+                        className="h-11 w-11 shrink-0 rounded-[12px] object-cover"
                       />
                     ) : (
                       <span
                         aria-hidden="true"
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-light text-lg font-bold text-brand"
+                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] text-lg font-extrabold ${CATEGORY_INITIAL[v.category]}`}
                       >
                         {v.productName.charAt(0)}
                       </span>
                     )}
                     <span className="flex min-w-0 flex-col">
-                      <span className="text-sm leading-tight font-semibold text-gray-900">
+                      <span className="text-[13.5px] leading-tight font-bold text-ink">
                         {v.productName}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs font-medium text-muted">
                         {v.sizeMl} ml · {formatRupiah(v.price)}
                       </span>
                     </span>
                     {qty > 0 && (
-                      <span className="absolute top-1.5 right-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1 text-xs font-bold text-white">
+                      <span className="absolute -top-[7px] -right-[5px] flex h-[22px] min-w-[26px] items-center justify-center rounded-full bg-brand px-1.5 text-[13px] font-extrabold text-white shadow-[0_3px_8px_rgba(226,81,126,.35)]">
                         {qty}
                       </span>
                     )}

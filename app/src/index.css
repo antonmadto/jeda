@@ -1,7 +1,51 @@
-@import "tailwindcss";
+@import '@fontsource-variable/plus-jakarta-sans';
+@import 'tailwindcss';
 
+/* Desain "JE&DA Cantik" (Juli 2026) — token final dari design handoff.
+   Palet raspberry lembut; semua nilai high-fidelity, jangan diubah sembarangan. */
 @theme {
-  --color-brand: #d81b60;
-  --color-brand-dark: #ad1457;
-  --color-brand-light: #fce4ec;
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* brand */
+  --color-brand: #e2517e;
+  --color-brand-dark: #c74069;
+  --color-brand-light: #fce9f0;
+  --color-brand-deep: #9e2b52;
+
+  /* permukaan & teks */
+  --color-surface: #fbf6f7;
+  --color-ink: #33222b;
+  --color-ink-2: #5c4a53;
+  --color-muted: #9a8792;
+  --color-faint: #b7a4ad;
+  --color-line: #f8eef2;
+  --color-line-2: #f5e9ed;
+  --color-label: #a98e99;
+
+  /* tombol/permukaan tint sekunder */
+  --color-tint: #f7ebef;
+  --color-tint-dark: #f0dde5;
+  --color-tint-ink: #8a5b6c;
+  --color-track: #f4e4ea;
+  --color-border-soft: #efdde4;
+  --color-bg-soft: #fbf5f7;
+
+  /* uang / status */
+  --color-money: #2e9b68;
+  --color-money-dark: #1f7a50;
+  --color-money-tint: #e7f5ee;
+  --color-owe: #b26e0f;
+  --color-owe-tint: #fbf0dc;
+  --color-owe-deep: #8f5a0d;
+  --color-warn: #d9902b;
+  --color-danger: #d64545;
+  --color-danger-tint: #fdf1f1;
+
+  /* tint kategori produk */
+  --color-cat-fresh: #e7f4ec;
+  --color-cat-fresh-ink: #1f7a50;
+  --color-cat-creamy: #fbf0dc;
+  --color-cat-creamy-ink: #b26e0f;
+  --color-cat-ramu: #fae9e1;
+  --color-cat-ramu-ink: #b4592e;
 }

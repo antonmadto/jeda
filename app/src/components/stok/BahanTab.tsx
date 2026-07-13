@@ -23,12 +23,12 @@ export default function BahanTab() {
       .catch(() => setStatus('error'))
   }, [refreshKey])
 
-  if (status === 'loading') return <p className="text-gray-500">Memuat bahan…</p>
-  if (status === 'error') return <p className="text-red-600">Gagal memuat bahan.</p>
+  if (status === 'loading') return <p className="text-muted">Memuat bahan…</p>
+  if (status === 'error') return <p className="text-danger">Gagal memuat bahan.</p>
 
   return (
     <div className="flex flex-col gap-3">
-      <ul className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm">
+      <ul className="divide-y divide-line overflow-hidden rounded-[20px] bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]">
         {rows.map((row) => {
           const low = row.stock_qty < row.reorder_point
           return (
@@ -39,20 +39,22 @@ export default function BahanTab() {
                 className="flex min-h-14 w-full items-center justify-between px-4 py-2 text-left"
               >
                 <div>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-[14.5px] font-bold text-ink">
                     {row.name}
                     {low && (
-                      <span className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs font-semibold text-red-700">
+                      <span className="ml-2 rounded-full bg-danger-tint px-2 py-0.5 align-middle text-[11px] font-bold text-danger">
                         Perlu belanja
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs font-medium text-muted">
                     {formatRupiah(Math.round(row.cost_per_unit))}/{row.unit} · titik pesan ulang{' '}
                     {row.reorder_point.toLocaleString('id-ID')} {row.unit}
                   </p>
                 </div>
-                <span className={`text-sm font-bold ${low ? 'text-red-600' : 'text-gray-700'}`}>
+                <span
+                  className={`text-[13.5px] font-extrabold ${low ? 'text-danger' : 'text-ink-2'}`}
+                >
                   {row.stock_qty.toLocaleString('id-ID')} {row.unit}
                 </span>
               </button>
@@ -82,7 +84,7 @@ export default function BahanTab() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="h-12 rounded-xl border border-dashed border-brand font-semibold text-brand"
+          className="h-[50px] rounded-2xl border-[1.5px] border-dashed border-brand font-bold text-brand"
         >
           + Bahan baru
         </button>
@@ -140,43 +142,43 @@ function IngredientEditor({ row, onDone }: { row: IngredientRow; onDone: () => v
   }
 
   return (
-    <div className="flex flex-col gap-2 bg-gray-50 px-4 py-3">
-      <label className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Stok sekarang ({row.unit})</span>
+    <div className="flex flex-col gap-2 bg-bg-soft px-4 py-3">
+      <label className="flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Stok sekarang ({row.unit})</span>
         <input
           type="number"
           inputMode="numeric"
           value={stockQty}
           onChange={(e) => setStockQty(e.target.value)}
-          className="h-11 w-28 rounded-lg border border-gray-300 px-2 text-right"
+          className="h-11 w-28 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-right text-ink"
         />
       </label>
-      <label className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Biaya per {row.unit} (Rp)</span>
+      <label className="flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Biaya per {row.unit} (Rp)</span>
         <input
           type="number"
           inputMode="decimal"
           step="0.0001"
           value={cost}
           onChange={(e) => setCost(e.target.value)}
-          className="h-11 w-28 rounded-lg border border-gray-300 px-2 text-right"
+          className="h-11 w-28 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-right text-ink"
         />
       </label>
-      <label className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Titik pesan ulang ({row.unit})</span>
+      <label className="flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Titik pesan ulang ({row.unit})</span>
         <input
           type="number"
           inputMode="numeric"
           value={reorder}
           onChange={(e) => setReorder(e.target.value)}
-          className="h-11 w-28 rounded-lg border border-gray-300 px-2 text-right"
+          className="h-11 w-28 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-right text-ink"
         />
       </label>
       <button
         type="button"
         disabled={saving}
         onClick={save}
-        className="h-11 rounded-lg bg-brand font-semibold text-white disabled:opacity-60"
+        className="h-11 rounded-[12px] bg-brand font-bold text-white active:bg-brand-dark disabled:opacity-60"
       >
         {saving ? 'Menyimpan…' : 'Simpan'}
       </button>
@@ -184,7 +186,7 @@ function IngredientEditor({ row, onDone }: { row: IngredientRow; onDone: () => v
         type="button"
         disabled={saving}
         onClick={remove}
-        className="h-11 rounded-lg border border-red-200 font-semibold text-red-600 active:bg-red-50 disabled:opacity-60"
+        className="h-11 rounded-[12px] bg-danger-tint font-bold text-danger disabled:opacity-60"
       >
         Hapus bahan
       </button>
@@ -217,14 +219,14 @@ function NewIngredientForm({ onDone, onCancel }: { onDone: () => void; onCancel:
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl bg-white p-4 shadow-sm">
-      <h3 className="font-semibold text-gray-900">Bahan baru</h3>
+    <div className="flex flex-col gap-2 rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+      <h3 className="text-base font-extrabold text-ink">Bahan baru</h3>
       <input
         type="text"
         placeholder="Nama bahan"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="h-12 rounded-lg border border-gray-300 px-3"
+        className="h-12 rounded-[12px] border-[1.5px] border-border-soft px-3 text-ink placeholder:text-faint"
       />
       <div className="flex gap-2">
         {UNIT_OPTIONS.map((u) => (
@@ -232,40 +234,40 @@ function NewIngredientForm({ onDone, onCancel }: { onDone: () => void; onCancel:
             key={u}
             type="button"
             onClick={() => setUnit(u)}
-            className={`h-11 flex-1 rounded-lg text-sm font-semibold ${
-              unit === u ? 'bg-brand text-white' : 'border border-gray-300 text-gray-700'
+            className={`h-11 flex-1 rounded-[12px] text-[13.5px] font-bold ${
+              unit === u ? 'bg-brand text-white' : 'bg-tint text-tint-ink active:bg-tint-dark'
             }`}
           >
             {u}
           </button>
         ))}
       </div>
-      <label className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Biaya per {unit} (Rp)</span>
+      <label className="flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Biaya per {unit} (Rp)</span>
         <input
           type="number"
           inputMode="decimal"
           step="0.0001"
           value={cost}
           onChange={(e) => setCost(e.target.value)}
-          className="h-11 w-28 rounded-lg border border-gray-300 px-2 text-right"
+          className="h-11 w-28 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink"
         />
       </label>
-      <label className="flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Titik pesan ulang ({unit})</span>
+      <label className="flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Titik pesan ulang ({unit})</span>
         <input
           type="number"
           inputMode="numeric"
           value={reorder}
           onChange={(e) => setReorder(e.target.value)}
-          className="h-11 w-28 rounded-lg border border-gray-300 px-2 text-right"
+          className="h-11 w-28 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink"
         />
       </label>
       <div className="flex gap-2">
         <button
           type="button"
           onClick={onCancel}
-          className="h-11 flex-1 rounded-lg border border-gray-300 font-semibold text-gray-600"
+          className="h-11 flex-1 rounded-[12px] bg-tint font-bold text-tint-ink active:bg-tint-dark"
         >
           Batal
         </button>
@@ -273,7 +275,7 @@ function NewIngredientForm({ onDone, onCancel }: { onDone: () => void; onCancel:
           type="button"
           disabled={saving || !name.trim()}
           onClick={save}
-          className="h-11 flex-1 rounded-lg bg-brand font-semibold text-white disabled:opacity-60"
+          className="h-11 flex-1 rounded-[12px] bg-brand font-bold text-white active:bg-brand-dark disabled:opacity-60"
         >
           Simpan
         </button>

@@ -103,30 +103,44 @@ export default function JualPage() {
   const promoLabel = dow === 5 ? 'Jumat Berkah' : dow === 6 ? 'Sabtu Ceria' : null
   const promoActive = promoLabel !== null && (channel === 'lapak' || channel === 'cfd')
 
-  if (loadStatus === 'loading') return <p className="text-gray-500">Memuat produk…</p>
+  if (loadStatus === 'loading') return <p className="text-sm font-medium text-muted">Memuat produk…</p>
   if (loadStatus === 'error')
-    return <p className="text-red-600">Gagal memuat produk. Periksa koneksi.</p>
+    return <p className="text-sm font-medium text-danger">Gagal memuat produk. Periksa koneksi.</p>
 
   return (
     <div className={`flex flex-col gap-4 ${lines.length > 0 ? 'pb-96' : ''}`}>
       <ChannelTabs value={channel} onChange={setChannel} />
 
       {promoActive && (
-        <p className="rounded-lg bg-brand-light px-3 py-2 text-sm font-medium text-brand-dark">
-          {promoLabel}: semua fresh juice Rp15.000
-        </p>
+        <div className="flex items-center gap-3 rounded-2xl border-[1.5px] border-dashed border-brand bg-brand-light px-3.5 py-3">
+          <span
+            aria-hidden="true"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-brand text-[15px] font-extrabold text-white"
+          >
+            %
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span className="text-sm font-extrabold text-brand-deep">{promoLabel}</span>
+            <span className="text-[12.5px] font-medium text-[#B25578]">
+              Semua fresh juice jadi Rp15.000
+            </span>
+          </span>
+        </div>
       )}
 
       {savedFlash && (
-        <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+        <p
+          role="status"
+          className="rounded-2xl bg-money-tint px-3.5 py-3 text-sm font-bold text-money-dark"
+        >
           Transaksi tersimpan ✓
         </p>
       )}
 
       {warnings.length > 0 && (
-        <div className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          <p className="font-semibold">Stok jadi tidak cukup (tetap tercatat):</p>
-          <ul className="list-inside list-disc">
+        <div className="rounded-2xl bg-owe-tint px-3.5 py-3 text-[13.5px] text-owe-deep">
+          <p className="font-extrabold text-owe">Stok jadi tidak cukup (tetap tercatat):</p>
+          <ul className="list-inside list-disc font-medium">
             {warnings.map((w) => (
               <li key={`${w.name}-${w.size_ml}`}>
                 {w.name} {w.size_ml} ml — sisa {w.qty_after}
@@ -136,7 +150,7 @@ export default function JualPage() {
           <button
             type="button"
             onClick={() => setWarnings([])}
-            className="mt-1 h-11 font-semibold text-amber-700 underline"
+            className="mt-1 h-11 font-bold text-owe underline"
           >
             Tutup
           </button>

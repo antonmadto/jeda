@@ -52,19 +52,22 @@ export default function ProduksiTab() {
       .catch(() => setStatus('error'))
   }, [refreshKey])
 
-  if (status === 'loading') return <p className="text-gray-500">Memuat data produksi…</p>
-  if (status === 'error') return <p className="text-red-600">Gagal memuat data produksi.</p>
+  if (status === 'loading') return <p className="text-muted">Memuat data produksi…</p>
+  if (status === 'error') return <p className="text-danger">Gagal memuat data produksi.</p>
 
   return (
     <div className="flex flex-col gap-5">
       {savedFlash && (
-        <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+        <p
+          role="status"
+          className="rounded-[14px] bg-money-tint px-3 py-2 text-[13.5px] font-bold text-money-dark"
+        >
           Batch produksi tersimpan ✓
         </p>
       )}
       {warnings.length > 0 && (
-        <div className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          <p className="font-semibold">Stok bahan minus (periksa dan koreksi di tab Bahan):</p>
+        <div className="rounded-[14px] bg-owe-tint px-3 py-2 text-[13.5px] text-owe">
+          <p className="font-bold">Stok bahan minus (periksa dan koreksi di tab Bahan):</p>
           <ul className="list-inside list-disc">
             {warnings.map((w) => (
               <li key={w.name}>
@@ -75,7 +78,7 @@ export default function ProduksiTab() {
           <button
             type="button"
             onClick={() => setWarnings([])}
-            className="mt-1 h-11 font-semibold text-amber-700 underline"
+            className="mt-1 h-11 font-bold text-owe-deep underline"
           >
             Tutup
           </button>
@@ -95,28 +98,28 @@ export default function ProduksiTab() {
       <FinishedStockList finished={finished} onChanged={() => setRefreshKey((k) => k + 1)} />
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+        <h2 className="mb-2 text-[11px] font-extrabold tracking-[.09em] text-label uppercase">
           Batch Terakhir
         </h2>
         {batches.length === 0 ? (
-          <p className="rounded-xl bg-white px-4 py-4 text-center text-sm text-gray-400 shadow-sm">
+          <p className="rounded-[20px] bg-white px-4 py-4 text-center text-[13.5px] text-faint shadow-[0_2px_10px_rgba(160,60,95,.07)]">
             Belum ada batch produksi.
           </p>
         ) : (
-          <ul className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm">
+          <ul className="divide-y divide-line overflow-hidden rounded-[20px] bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]">
             {batches.map((b) => (
               <li key={b.id} className="flex items-center gap-2 px-4 py-2.5">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-[13.5px] font-bold text-ink">
                     {formatDateWIB(b.batch_date)} · {b.bottles} botol
                   </p>
-                  {b.note && <p className="text-xs text-gray-500">{b.note}</p>}
+                  {b.note && <p className="text-xs font-medium text-muted">{b.note}</p>}
                 </div>
                 <button
                   type="button"
                   disabled={deletingBatchId === b.id}
                   onClick={() => handleDeleteBatch(b)}
-                  className="h-11 rounded-lg border border-red-200 px-3 text-xs font-semibold text-red-600 active:bg-red-50 disabled:opacity-60"
+                  className="h-11 rounded-[12px] bg-danger-tint px-3 text-xs font-bold text-danger disabled:opacity-60"
                 >
                   {deletingBatchId === b.id ? '…' : 'Hapus'}
                 </button>
@@ -171,7 +174,7 @@ function BatchForm({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="h-13 rounded-xl bg-brand text-base font-bold text-white active:bg-brand-dark"
+        className="h-[54px] rounded-2xl bg-brand text-base font-extrabold text-white shadow-[0_6px_16px_rgba(226,81,126,.28)] active:bg-brand-dark"
       >
         + Catat Batch Produksi
       </button>
@@ -183,22 +186,22 @@ function BatchForm({
   )
 
   return (
-    <section className="rounded-xl bg-white p-4 shadow-sm">
-      <h2 className="mb-3 font-bold text-gray-900">Catat Batch Produksi</h2>
-      <label className="mb-3 flex items-center justify-between gap-2 text-sm">
-        <span className="text-gray-700">Tanggal produksi</span>
+    <section className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
+      <h2 className="mb-3 text-base font-extrabold text-ink">Catat Batch Produksi</h2>
+      <label className="mb-3 flex items-center justify-between gap-2 text-[13.5px]">
+        <span className="font-medium text-ink-2">Tanggal produksi</span>
         <input
           type="date"
           value={batchDate}
           onChange={(e) => setBatchDate(e.target.value)}
-          className="h-11 rounded-lg border border-gray-300 px-2"
+          className="h-11 rounded-[12px] border-[1.5px] border-border-soft px-2 text-ink"
         />
       </label>
 
       <div className="flex max-h-80 flex-col gap-3 overflow-y-auto">
         {categories.map((c) => (
           <div key={c}>
-            <h3 className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            <h3 className="mb-1 text-[11px] font-extrabold tracking-[.09em] text-label uppercase">
               {CATEGORY_LABELS[c]}
             </h3>
             {variants
@@ -206,9 +209,9 @@ function BatchForm({
               .map((v) => (
                 <label
                   key={v.variantId}
-                  className="flex min-h-11 items-center justify-between gap-2 text-sm"
+                  className="flex min-h-11 items-center justify-between gap-2 text-[13.5px]"
                 >
-                  <span className="text-gray-800">{v.label}</span>
+                  <span className="font-medium text-ink">{v.label}</span>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -219,7 +222,7 @@ function BatchForm({
                     onChange={(e) =>
                       setQtyByVariant((m) => ({ ...m, [v.variantId]: e.target.value }))
                     }
-                    className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+                    className="h-11 w-20 rounded-[12px] border-[1.5px] border-border-soft px-2 text-right text-ink placeholder:text-faint"
                   />
                 </label>
               ))}
@@ -232,16 +235,16 @@ function BatchForm({
         placeholder="Catatan (opsional)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
-        className="mt-3 h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
+        className="mt-3 h-11 w-full rounded-[12px] border-[1.5px] border-border-soft px-3 text-[13.5px] text-ink placeholder:text-faint"
       />
 
       <div className="mt-3 flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold text-gray-700">{totalBottles} botol</span>
+        <span className="text-[13.5px] font-extrabold text-ink-2">{totalBottles} botol</span>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="h-11 rounded-lg border border-gray-300 px-4 text-sm font-semibold text-gray-600"
+            className="h-11 rounded-[12px] bg-tint px-4 text-[13.5px] font-bold text-tint-ink active:bg-tint-dark"
           >
             Batal
           </button>
@@ -249,7 +252,7 @@ function BatchForm({
             type="button"
             disabled={saving || items.length === 0}
             onClick={save}
-            className="h-11 rounded-lg bg-brand px-5 text-sm font-bold text-white disabled:opacity-60"
+            className="h-11 rounded-[12px] bg-brand px-5 text-[13.5px] font-extrabold text-white active:bg-brand-dark disabled:opacity-60"
           >
             {saving ? 'Menyimpan…' : 'Simpan Batch'}
           </button>
@@ -306,15 +309,15 @@ function FinishedStockList({
 
   return (
     <section>
-      <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+      <h2 className="mb-2 text-[11px] font-extrabold tracking-[.09em] text-label uppercase">
         Stok Jadi di Freezer
       </h2>
       {nonZero.length === 0 ? (
-        <p className="rounded-xl bg-white px-4 py-4 text-center text-sm text-gray-400 shadow-sm">
+        <p className="rounded-[20px] bg-white px-4 py-4 text-center text-[13.5px] text-faint shadow-[0_2px_10px_rgba(160,60,95,.07)]">
           Stok jadi kosong. Catat batch produksi untuk mengisi.
         </p>
       ) : (
-        <ul className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm">
+        <ul className="divide-y divide-line overflow-hidden rounded-[20px] bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]">
           {nonZero.map((f) => (
             <li key={f.variantId}>
               <button
@@ -326,17 +329,19 @@ function FinishedStockList({
                 }}
                 className="flex min-h-12 w-full items-center justify-between px-4 py-2 text-left"
               >
-                <span className="text-sm font-medium text-gray-900">{f.label}</span>
+                <span className="text-[14.5px] font-bold text-ink">{f.label}</span>
                 <span
-                  className={`text-sm font-bold ${f.qty < 0 ? 'text-red-600' : 'text-gray-700'}`}
+                  className={`rounded-full bg-tint px-2.5 py-1 text-[13px] font-extrabold ${
+                    f.qty < 0 ? 'text-danger' : 'text-tint-ink'
+                  }`}
                 >
                   {f.qty} botol
                 </span>
               </button>
               {openId === f.variantId && (
-                <div className="flex flex-col gap-3 bg-gray-50 px-4 py-3">
+                <div className="flex flex-col gap-3 bg-bg-soft px-4 py-3">
                   <div>
-                    <p className="mb-1 text-xs font-medium text-gray-600">
+                    <p className="mb-1 text-xs font-medium text-muted">
                       Koreksi jumlah (set ke angka benar)
                     </p>
                     <div className="flex items-center gap-2">
@@ -346,20 +351,20 @@ function FinishedStockList({
                         value={correctQty}
                         onChange={(e) => setCorrectQty(e.target.value)}
                         aria-label={`Koreksi jumlah ${f.label}`}
-                        className="h-11 w-24 rounded-lg border border-gray-300 px-2 text-right"
+                        className="h-11 w-24 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-right text-ink"
                       />
                       <button
                         type="button"
                         disabled={saving}
                         onClick={() => saveCorrection(f.variantId)}
-                        className="h-11 flex-1 rounded-lg bg-brand text-sm font-semibold text-white disabled:opacity-60"
+                        className="h-11 flex-1 rounded-[12px] bg-brand text-[13.5px] font-bold text-white active:bg-brand-dark disabled:opacity-60"
                       >
                         Simpan jumlah
                       </button>
                     </div>
                   </div>
-                  <div className="border-t border-gray-200 pt-3">
-                    <p className="mb-1 text-xs font-medium text-gray-600">
+                  <div className="border-t border-line-2 pt-3">
+                    <p className="mb-1 text-xs font-medium text-muted">
                       Tandai keluar (kurangi stok)
                     </p>
                     <div className="flex items-center gap-2">
@@ -370,13 +375,13 @@ function FinishedStockList({
                         value={qty}
                         onChange={(e) => setQty(e.target.value)}
                         aria-label={`Jumlah sisa ${f.label}`}
-                        className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+                        className="h-11 w-20 rounded-[12px] border-[1.5px] border-border-soft bg-white px-2 text-right text-ink"
                       />
                       <button
                         type="button"
                         disabled={saving}
                         onClick={() => writeOff(f.variantId, 'spoilage')}
-                        className="h-11 flex-1 rounded-lg border border-red-200 text-sm font-semibold text-red-600 disabled:opacity-60"
+                        className="h-11 flex-1 rounded-[12px] bg-danger-tint text-[13.5px] font-bold text-danger disabled:opacity-60"
                       >
                         Rusak
                       </button>
@@ -384,7 +389,7 @@ function FinishedStockList({
                         type="button"
                         disabled={saving}
                         onClick={() => writeOff(f.variantId, 'giveaway')}
-                        className="h-11 flex-1 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 disabled:opacity-60"
+                        className="h-11 flex-1 rounded-[12px] bg-tint text-[13.5px] font-bold text-tint-ink active:bg-tint-dark disabled:opacity-60"
                       >
                         Dibagikan
                       </button>

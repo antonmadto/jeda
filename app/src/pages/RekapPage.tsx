@@ -22,7 +22,7 @@ export default function RekapPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="radiogroup" aria-label="Rentang rekap" className="grid grid-cols-3 gap-1 rounded-xl bg-gray-200 p-1">
+      <div role="radiogroup" aria-label="Rentang rekap" className="grid grid-cols-3 gap-1 rounded-2xl bg-track p-1">
         {MODES.map((m) => (
           <button
             key={m.key}
@@ -30,8 +30,10 @@ export default function RekapPage() {
             role="radio"
             aria-checked={mode === m.key}
             onClick={() => setMode(m.key)}
-            className={`h-11 rounded-lg text-sm font-semibold ${
-              mode === m.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
+            className={`h-11 rounded-[13px] text-sm ${
+              mode === m.key
+                ? 'bg-white font-extrabold text-ink shadow-[0_2px_8px_rgba(160,60,95,.12)]'
+                : 'font-bold text-[#A17F8F]'
             }`}
           >
             {m.label}
@@ -100,17 +102,17 @@ function DailyView({
         value={dateStr}
         max={todayWIB()}
         onChange={(e) => onDateChange(e.target.value)}
-        className="h-11 self-start rounded-lg border border-gray-300 bg-white px-3"
+        className="h-11 self-start rounded-[12px] border-[1.5px] border-border-soft bg-white px-3 text-sm font-semibold text-ink"
       />
 
-      {status === 'loading' && <p className="text-gray-500">Memuat rekap…</p>}
-      {status === 'error' && <p className="text-red-600">Gagal memuat rekap.</p>}
+      {status === 'loading' && <p className="text-sm font-medium text-muted">Memuat rekap…</p>}
+      {status === 'error' && <p className="text-sm font-semibold text-danger">Gagal memuat rekap.</p>}
       {status === 'ready' && recap && (
         <>
           <DailyRecapCard ref={cardRef} recap={recap} dateStr={dateStr} />
 
           {flash && (
-            <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+            <p role="status" className="rounded-[12px] bg-money-tint px-3 py-2 text-sm font-semibold text-money-dark">
               {flash}
             </p>
           )}
@@ -119,7 +121,7 @@ function DailyView({
             type="button"
             disabled={sharing}
             onClick={share}
-            className="h-13 rounded-xl bg-green-600 text-base font-bold text-white active:bg-green-700 disabled:opacity-60"
+            className="h-[54px] rounded-2xl bg-money text-base font-extrabold text-white shadow-[0_6px_16px_rgba(46,155,104,.25)] active:bg-money-dark disabled:opacity-60"
           >
             {sharing ? 'Menyiapkan gambar…' : 'Bagikan Rekap ke WhatsApp'}
           </button>

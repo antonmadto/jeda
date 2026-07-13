@@ -36,45 +36,49 @@ export default function ExportPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Link to="/lainnya" aria-label="Kembali" className="text-2xl text-gray-500">
+      <div className="flex items-center gap-3">
+        <Link
+          to="/lainnya"
+          aria-label="Kembali"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-2xl text-ink-2 shadow-[0_2px_10px_rgba(160,60,95,.07)]"
+        >
           ‹
         </Link>
-        <h2 className="text-xl font-bold text-gray-900">Ekspor Data</h2>
+        <h2 className="text-[22px] font-extrabold tracking-[-.01em] text-ink">Ekspor Data</h2>
       </div>
 
-      <p className="text-sm text-gray-600">
+      <p className="text-[13.5px] text-ink-2">
         Unduh seluruh data (penjualan, item, pengeluaran, produksi) sebagai file Excel untuk arsip
         atau dibuka di komputer.
       </p>
 
-      <div className="rounded-xl bg-white p-4 shadow-sm">
+      <div className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
         <label className="mb-3 flex items-center justify-between gap-2 text-sm">
-          <span className="text-gray-700">Dari tanggal</span>
+          <span className="font-semibold text-ink-2">Dari tanggal</span>
           <input
             type="date"
             aria-label="Tanggal mulai"
             value={start}
             max={today}
             onChange={(e) => setStart(e.target.value)}
-            className="h-11 rounded-lg border border-gray-300 px-2"
+            className="h-11 rounded-[12px] border-[1.5px] border-border-soft px-3 text-ink"
           />
         </label>
         <label className="flex items-center justify-between gap-2 text-sm">
-          <span className="text-gray-700">Sampai tanggal</span>
+          <span className="font-semibold text-ink-2">Sampai tanggal</span>
           <input
             type="date"
             aria-label="Tanggal akhir"
             value={end}
             max={today}
             onChange={(e) => setEnd(e.target.value)}
-            className="h-11 rounded-lg border border-gray-300 px-2"
+            className="h-11 rounded-[12px] border-[1.5px] border-border-soft px-3 text-ink"
           />
         </label>
       </div>
 
       {message && (
-        <p role="status" className="rounded-lg bg-gray-100 px-3 py-2 text-sm text-gray-700">
+        <p role="status" className="rounded-[12px] bg-bg-soft px-3 py-2.5 text-sm text-ink-2">
           {message}
         </p>
       )}
@@ -83,7 +87,7 @@ export default function ExportPage() {
         type="button"
         disabled={status === 'working'}
         onClick={handleExport}
-        className="h-13 rounded-xl bg-green-600 text-base font-bold text-white active:bg-green-700 disabled:opacity-60"
+        className="h-[54px] rounded-2xl bg-money text-base font-extrabold text-white shadow-[0_6px_16px_rgba(46,155,104,.25)] active:bg-money-dark disabled:opacity-60"
       >
         {status === 'working' ? 'Menyiapkan file…' : 'Unduh Excel'}
       </button>

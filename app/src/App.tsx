@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { supabase } from './lib/supabase'
+import { formatDateWIB, todayWIB } from './lib/date'
 import { useReceivablesStore } from './store/receivables'
 import BottomNav from './components/BottomNav'
 import LoginPage from './pages/LoginPage' // eager: layar pertama saat belum login
@@ -34,7 +35,7 @@ const PelangganDetailPage = lazyWithRetry(() => import('./pages/PelangganDetailP
 const ExportPage = lazyWithRetry(() => import('./pages/ExportPage'))
 
 function PageFallback() {
-  return <div className="flex min-h-[60vh] items-center justify-center text-gray-400">Memuat…</div>
+  return <div className="flex min-h-[60vh] items-center justify-center text-muted">Memuat…</div>
 }
 
 // Menangkap error render/chunk lazi yang gagal (Suspense tidak menangkap error).
@@ -47,7 +48,7 @@ class RouteErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center text-gray-500">
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 text-center text-muted">
           <p>Gagal memuat halaman ini. Coba muat ulang.</p>
           <button
             type="button"
@@ -55,7 +56,7 @@ class RouteErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
               sessionStorage.removeItem('chunk-reloaded')
               window.location.reload()
             }}
-            className="min-h-11 rounded-lg bg-brand px-5 font-semibold text-white"
+            className="min-h-11 rounded-full bg-brand px-5 font-bold text-white shadow-[0_6px_16px_rgba(226,81,126,.28)] active:bg-brand-dark"
           >
             Muat ulang
           </button>
@@ -73,9 +74,19 @@ export function AppShell() {
   }, [refreshReceivables])
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-gray-50">
-      <header className="sticky top-0 z-10 bg-brand px-4 py-3 text-white shadow">
-        <h1 className="text-lg font-bold">JE&amp;DA</h1>
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-surface">
+      <header className="sticky top-0 z-10 border-b border-line-2 bg-[rgba(251,246,247,.92)] px-5 pt-3.5 pb-2.5 backdrop-blur-[8px]">
+        <div className="flex items-center gap-3">
+          <img src="/logo-pink.png" alt="" className="h-[38px] w-[38px] rounded-[12px]" />
+          <div>
+            <h1 className="text-[17px] font-extrabold tracking-[-.01em] text-ink">JE&amp;DA</h1>
+            <p className="text-xs font-medium text-muted">{formatDateWIB(todayWIB())}</p>
+          </div>
+          <div className="flex-1" />
+          <span className="rounded-full bg-money-tint px-3 py-1.5 text-xs font-bold text-money-dark">
+            Buka
+          </span>
+        </div>
       </header>
       <main className="flex-1 px-4 py-4 pb-24">
         {/* Boundary + Suspense HANYA membungkus Routes agar header & BottomNav tetap ter-mount */}
@@ -117,7 +128,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-gray-50 text-gray-500">
+      <div className="flex min-h-dvh items-center justify-center bg-surface text-muted">
         Memuat…
       </div>
     )

@@ -5,6 +5,12 @@ import type { CustomerWithStat } from '../lib/customersData'
 import { formatRupiah } from '../lib/format'
 import { formatDateWIB } from '../lib/date'
 
+const AVATAR_STYLES = [
+  'bg-brand-light text-brand',
+  'bg-money-tint text-money-dark',
+  'bg-owe-tint text-owe',
+]
+
 export default function PelangganPage() {
   const [rows, setRows] = useState<CustomerWithStat[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
@@ -20,44 +26,53 @@ export default function PelangganPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Link to="/lainnya" aria-label="Kembali" className="text-2xl text-gray-500">
+      <div className="flex items-center gap-3">
+        <Link
+          to="/lainnya"
+          aria-label="Kembali"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-2xl text-ink-2 shadow-[0_2px_10px_rgba(160,60,95,.07)]"
+        >
           ‹
         </Link>
-        <h2 className="text-xl font-bold text-gray-900">Pelanggan</h2>
+        <h2 className="text-[22px] font-extrabold tracking-[-.01em] text-ink">Pelanggan</h2>
       </div>
 
-      {status === 'loading' && <p className="text-gray-500">Memuat pelanggan…</p>}
-      {status === 'error' && <p className="text-red-600">Gagal memuat pelanggan.</p>}
+      {status === 'loading' && <p className="text-muted">Memuat pelanggan…</p>}
+      {status === 'error' && <p className="text-danger">Gagal memuat pelanggan.</p>}
 
       {status === 'ready' &&
         (rows.length === 0 ? (
-          <p className="rounded-xl bg-white px-4 py-8 text-center text-gray-400 shadow-sm">
+          <p className="rounded-[20px] bg-white px-4 py-8 text-center text-faint shadow-[0_2px_10px_rgba(160,60,95,.07)]">
             Belum ada pelanggan. Pelanggan ditambah saat mencatat penjualan.
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
-            {rows.map((c) => (
+            {rows.map((c, i) => (
               <li key={c.customerId}>
                 <Link
                   to={`/lainnya/pelanggan/${c.customerId}`}
-                  className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm"
+                  className="flex items-center gap-3 rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]"
                 >
+                  <span
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-extrabold ${AVATAR_STYLES[i % 3]}`}
+                  >
+                    {c.name.charAt(0).toUpperCase()}
+                  </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900">{c.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-extrabold text-ink">{c.name}</p>
+                    <p className="text-xs font-medium text-muted">
                       {c.transactionCount} transaksi
                       {c.lastPurchaseISO && ` · terakhir ${formatDateWIB(c.lastPurchaseISO)}`}
                     </p>
                     {c.outstanding > 0 && (
-                      <p className="mt-0.5 text-xs font-semibold text-amber-700">
+                      <p className="mt-0.5 text-xs font-bold text-owe">
                         Piutang {formatRupiah(c.outstanding)}
                       </p>
                     )}
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900">{formatRupiah(c.totalSpent)}</p>
-                    <p className="text-xs text-gray-400">total belanja</p>
+                    <p className="font-extrabold text-ink">{formatRupiah(c.totalSpent)}</p>
+                    <p className="text-xs text-faint">total belanja</p>
                   </div>
                 </Link>
               </li>

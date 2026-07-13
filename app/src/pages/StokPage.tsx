@@ -18,7 +18,7 @@ export default function StokPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div role="radiogroup" aria-label="Bagian stok" className="grid grid-cols-4 gap-1 rounded-xl bg-gray-200 p-1">
+      <div role="radiogroup" aria-label="Bagian stok" className="grid grid-cols-4 gap-1 rounded-2xl bg-track p-1">
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -26,8 +26,10 @@ export default function StokPage() {
             role="radio"
             aria-checked={tab === t.key}
             onClick={() => setTab(t.key)}
-            className={`h-11 rounded-lg text-sm font-semibold ${
-              tab === t.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
+            className={`h-[42px] rounded-[13px] text-[13.5px] ${
+              tab === t.key
+                ? 'bg-white font-extrabold text-ink shadow-[0_2px_8px_rgba(160,60,95,.12)]'
+                : 'font-bold text-[#A17F8F]'
             }`}
           >
             {t.label}

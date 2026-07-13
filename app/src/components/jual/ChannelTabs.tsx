@@ -23,8 +23,10 @@ export default function ChannelTabs({
           role="radio"
           aria-checked={value === c}
           onClick={() => onChange(c)}
-          className={`h-11 rounded-full text-sm font-semibold ${
-            value === c ? 'bg-brand text-white' : 'border border-gray-300 bg-white text-gray-700'
+          className={`h-11 rounded-full text-[13.5px] font-bold ${
+            value === c
+              ? 'bg-brand text-white shadow-[0_4px_10px_rgba(226,81,126,.25)]'
+              : 'bg-white text-tint-ink shadow-[0_2px_8px_rgba(160,60,95,.08)]'
           }`}
         >
           {CHANNEL_LABELS[c]}

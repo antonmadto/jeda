@@ -68,41 +68,41 @@ export default function TodaySales({
     }
   }
 
-  if (status === 'loading') return <p className="text-sm text-gray-500">Memuat transaksi…</p>
-  if (status === 'error') return <p className="text-sm text-red-600">Gagal memuat transaksi.</p>
+  if (status === 'loading') return <p className="text-sm font-medium text-muted">Memuat transaksi…</p>
+  if (status === 'error') return <p className="text-sm font-medium text-danger">Gagal memuat transaksi.</p>
 
   const omzet = rows.reduce((sum, r) => sum + r.total, 0)
 
   return (
     <section aria-label="Transaksi hari ini">
       <div className="mb-2 flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold tracking-wide text-gray-500 uppercase">
+        <h2 className="text-xs font-extrabold tracking-[.09em] text-label uppercase">
           Transaksi Hari Ini
         </h2>
         {rows.length > 0 && (
-          <span className="text-sm font-semibold text-gray-700">{formatRupiah(omzet)}</span>
+          <span className="text-sm font-extrabold text-brand">{formatRupiah(omzet)}</span>
         )}
       </div>
       {rows.length === 0 ? (
-        <p className="rounded-xl bg-white px-4 py-6 text-center text-sm text-gray-400 shadow-sm">
+        <p className="rounded-[20px] bg-white px-4 py-6 text-center text-sm font-medium text-faint shadow-[0_2px_10px_rgba(160,60,95,.07)]">
           Belum ada transaksi hari ini.
         </p>
       ) : (
-        <ul className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm">
+        <ul className="divide-y divide-line rounded-[20px] bg-white shadow-[0_2px_10px_rgba(160,60,95,.07)]">
           {rows.map((r) => {
             const bottles = r.sale_items.reduce((sum, i) => sum + i.qty, 0)
             return (
               <li key={r.id} className="flex items-center gap-2 px-3 py-2.5">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-[14.5px] font-extrabold text-ink">
                     {formatRupiah(r.total)}
                     {r.status === 'belum_lunas' && (
-                      <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-700">
+                      <span className="ml-2 rounded-full bg-owe-tint px-2 py-0.5 align-middle text-[11px] font-bold text-owe">
                         Belum lunas
                       </span>
                     )}
                   </p>
-                  <p className="truncate text-xs text-gray-500">
+                  <p className="truncate text-xs font-medium text-muted">
                     {formatTimeWIB(r.sold_at)} · {CHANNEL_LABELS[r.channel]} · {bottles} botol ·{' '}
                     {r.payment === 'cash' ? 'Cash' : 'QRIS'}
                     {r.promo_applied && ` · ${PROMO_LABELS[r.promo_applied] ?? r.promo_applied}`}
@@ -112,14 +112,14 @@ export default function TodaySales({
                 <button
                   type="button"
                   onClick={() => onEdit(r)}
-                  className="h-11 rounded-lg border border-gray-300 px-3 text-xs font-semibold text-gray-600 active:bg-gray-100"
+                  className="h-10 rounded-[12px] bg-tint px-3 text-xs font-bold text-tint-ink active:bg-tint-dark"
                 >
                   Koreksi
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(r)}
-                  className="h-11 rounded-lg border border-red-200 px-3 text-xs font-semibold text-red-600 active:bg-red-50"
+                  className="h-10 rounded-[12px] bg-danger-tint px-3 text-xs font-bold text-danger active:bg-[#F8E2E2]"
                 >
                   Hapus
                 </button>
