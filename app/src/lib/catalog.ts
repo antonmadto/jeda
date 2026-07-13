@@ -10,6 +10,8 @@ export type VariantInfo = {
   price: number
   /** Nama tampilan, contoh "Immune 500 ml". */
   label: string
+  /** URL publik foto produk, null bila belum ada foto. */
+  imageUrl: string | null
 }
 
 export const CATEGORY_LABELS: Record<Category, string> = {
@@ -21,14 +23,17 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 export async function fetchCatalog(): Promise<VariantInfo[]> {
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, category, product_variants (id, size_ml, price)')
+    .select('id, name, category, image_path, product_variants (id, size_ml, price)')
     .eq('is_active', true)
     .order('category')
     .order('name')
   if (error) throw error
 
-  return (data ?? []).flatMap((p) =>
-    [...p.product_variants]
+  return (data ?? []).flatMap((p) => {
+    const imageUrl = p.image_path
+      ? supabase.storage.from('product-photos').getPublicUrl(p.image_path).data.publicUrl
+      : null
+    return [...p.product_variants]
       .sort((a, b) => b.size_ml - a.size_ml)
       .map((v) => ({
         variantId: v.id,
@@ -38,6 +43,7 @@ export async function fetchCatalog(): Promise<VariantInfo[]> {
         sizeMl: v.size_ml,
         price: v.price,
         label: `${p.name} ${v.size_ml} ml`,
-      })),
-  )
+        imageUrl,
+      }))
+  })
 }
