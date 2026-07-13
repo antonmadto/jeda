@@ -18,8 +18,8 @@ sadari risikonya bercampur dengan data asli).
 
 ```bash
 cd app
-E2E_EMAIL="aiman@jeda.test" E2E_PASSWORD="..." npm run test      # unit + RLS
-E2E_EMAIL="aiman@jeda.test" E2E_PASSWORD="..." npm run test:e2e  # e2e baca-saja
+E2E_EMAIL="<email-akun-test>" E2E_PASSWORD="..." npm run test      # unit + RLS
+E2E_EMAIL="<email-akun-test>" E2E_PASSWORD="..." npm run test:e2e  # e2e baca-saja
 ```
 
 Test mutasi akan tampil sebagai *skipped* — itu memang disengaja.
