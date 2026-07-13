@@ -45,7 +45,8 @@ test.skipIf(!enabled)(
       .from('recipes')
       .select('ingredient_id, qty')
       .eq('variant_id', variantId)
-    expect(recipe!.length).toBe(4)
+    // resep bisa diubah pemilik lewat UI — jangan asumsikan jumlah bahan tertentu
+    expect(recipe!.length).toBeGreaterThan(0)
 
     const { data: fsBefore } = await db
       .from('finished_stock')

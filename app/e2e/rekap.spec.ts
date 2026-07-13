@@ -24,8 +24,9 @@ test('rekap harian tampil, tambah lalu hapus pengeluaran, laba kotor menyesuaika
   await expect(page.getByText('Rekap Harian JE&DA')).toBeVisible()
   const labaBefore = await page.getByTestId('laba-kotor').textContent()
 
-  // tambah pengeluaran bensin 12.345
-  await page.getByRole('button', { name: 'Bensin' }).click()
+  // tambah pengeluaran bensin 12.345 (exact: hindari match tombol "Hapus pengeluaran Bensin"
+  // yang muncul bila ada pengeluaran bensin asli hari itu)
+  await page.getByRole('button', { name: 'Bensin', exact: true }).click()
   await page.getByLabel('Jumlah pengeluaran').fill('12345')
   await page.getByRole('button', { name: 'Tambah' }).click()
 
@@ -34,8 +35,9 @@ test('rekap harian tampil, tambah lalu hapus pengeluaran, laba kotor menyesuaika
   // laba kotor berubah (berkurang)
   await expect(page.getByTestId('laba-kotor')).not.toHaveText(labaBefore ?? '')
 
-  // hapus lagi supaya data bersih
-  await page.getByRole('button', { name: 'Hapus pengeluaran Bensin' }).click()
+  // hapus lagi supaya data bersih — .first() = terbaru = milik test ini,
+  // bukan pengeluaran bensin asli pemilik
+  await page.getByRole('button', { name: 'Hapus pengeluaran Bensin' }).first().click()
   await expect(page.getByTestId('laba-kotor')).toHaveText(labaBefore ?? '', { timeout: 10_000 })
 })
 

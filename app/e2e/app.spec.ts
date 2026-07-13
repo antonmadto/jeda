@@ -25,6 +25,6 @@ test('login lalu bottom nav 4 tab tampil dan katalog termuat', async ({ page }) 
   for (const label of ['Jual', 'Stok', 'Rekap', 'Lainnya']) {
     await expect(nav.getByRole('link', { name: label })).toBeVisible()
   }
-  // katalog dari seed tampil
-  await expect(page.getByText('Susu Kurma', { exact: true })).toBeVisible()
+  // katalog tampil (varian spesifik agar tidak ambigu dengan ukuran lain)
+  await expect(page.getByRole('button', { name: 'Susu Kurma 250 ml', exact: true })).toBeVisible()
 })

@@ -37,8 +37,9 @@ test('transaksi lapak: 1 botol Immune 500 ml, cash lunas, muncul di daftar lalu 
   await page.getByRole('button', { name: 'Immune 500 ml' }).click()
 
   // total harus persis hasil mesin harga untuk hari ini
+  // (harga Immune 500 ml per menu Juli 2026 = 35.000)
   const expected = computePrice(
-    [{ variantId: 'x', category: 'fresh', price: 38000, qty: 1 }],
+    [{ variantId: 'x', category: 'fresh', price: 35000, qty: 1 }],
     'lapak',
     new Date(),
   )

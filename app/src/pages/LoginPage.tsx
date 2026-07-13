@@ -23,9 +23,11 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col justify-center bg-gray-50 px-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-brand text-2xl font-bold text-white">
-          JD
-        </div>
+        <img
+          src="/pwa-192x192.png"
+          alt="Logo JE&DA"
+          className="mx-auto mb-3 h-20 w-20 rounded-2xl shadow-sm"
+        />
         <h1 className="text-2xl font-bold text-gray-900">JE&amp;DA</h1>
         <p className="mt-1 text-gray-600">Masuk untuk mulai mencatat</p>
       </div>
