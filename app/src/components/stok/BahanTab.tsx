@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { fetchIngredients } from '../../lib/inventory'
 import type { IngredientRow } from '../../lib/inventory'
-import { adjustIngredientStock } from '../../lib/stock'
+import { adjustIngredientStock, deleteIngredient } from '../../lib/stock'
 import { formatRupiah } from '../../lib/format'
 
 const UNIT_OPTIONS = ['gram', 'ml', 'pcs'] as const
@@ -124,6 +124,21 @@ function IngredientEditor({ row, onDone }: { row: IngredientRow; onDone: () => v
     }
   }
 
+  async function remove() {
+    if (!window.confirm(`Hapus bahan "${row.name}"? Tindakan ini tidak bisa dibatalkan.`)) return
+    setSaving(true)
+    try {
+      await deleteIngredient(row.id)
+      onDone()
+    } catch (e) {
+      // fungsi DB memberi pesan jelas bila bahan masih dipakai di resep
+      const msg = (e as { message?: string })?.message
+      window.alert(msg || 'Gagal menghapus bahan. Coba lagi.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-2 bg-gray-50 px-4 py-3">
       <label className="flex items-center justify-between gap-2 text-sm">
@@ -164,6 +179,14 @@ function IngredientEditor({ row, onDone }: { row: IngredientRow; onDone: () => v
         className="h-11 rounded-lg bg-brand font-semibold text-white disabled:opacity-60"
       >
         {saving ? 'Menyimpan…' : 'Simpan'}
+      </button>
+      <button
+        type="button"
+        disabled={saving}
+        onClick={remove}
+        className="h-11 rounded-lg border border-red-200 font-semibold text-red-600 active:bg-red-50 disabled:opacity-60"
+      >
+        Hapus bahan
       </button>
     </div>
   )

@@ -3,7 +3,12 @@ import { fetchCatalog, CATEGORY_LABELS } from '../../lib/catalog'
 import type { VariantInfo } from '../../lib/catalog'
 import { fetchFinishedStock, fetchRecentBatches } from '../../lib/inventory'
 import type { BatchRow, FinishedStockRow } from '../../lib/inventory'
-import { recordProduction, writeOffFinished } from '../../lib/stock'
+import {
+  adjustFinishedStock,
+  recordProduction,
+  undoProduction,
+  writeOffFinished,
+} from '../../lib/stock'
 import type { IngredientWarning } from '../../lib/stock'
 import { formatDateWIB, todayWIB } from '../../lib/date'
 import type { Category } from '../../lib/pricing'
@@ -16,6 +21,25 @@ export default function ProduksiTab() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [warnings, setWarnings] = useState<IngredientWarning[]>([])
   const [savedFlash, setSavedFlash] = useState(false)
+  const [deletingBatchId, setDeletingBatchId] = useState<string | null>(null)
+
+  async function handleDeleteBatch(b: BatchRow) {
+    if (
+      !window.confirm(
+        `Hapus batch ${formatDateWIB(b.batch_date)} (${b.bottles} botol)? Stok bahan & stok jadi akan dikembalikan seperti sebelum batch.`,
+      )
+    )
+      return
+    setDeletingBatchId(b.id)
+    try {
+      await undoProduction(b.id)
+      setRefreshKey((k) => k + 1)
+    } catch {
+      window.alert('Gagal menghapus batch. Coba lagi.')
+    } finally {
+      setDeletingBatchId(null)
+    }
+  }
 
   useEffect(() => {
     Promise.all([fetchCatalog(), fetchFinishedStock(), fetchRecentBatches()])
@@ -81,11 +105,21 @@ export default function ProduksiTab() {
         ) : (
           <ul className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm">
             {batches.map((b) => (
-              <li key={b.id} className="px-4 py-2.5">
-                <p className="text-sm font-medium text-gray-900">
-                  {formatDateWIB(b.batch_date)} · {b.bottles} botol
-                </p>
-                {b.note && <p className="text-xs text-gray-500">{b.note}</p>}
+              <li key={b.id} className="flex items-center gap-2 px-4 py-2.5">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {formatDateWIB(b.batch_date)} · {b.bottles} botol
+                  </p>
+                  {b.note && <p className="text-xs text-gray-500">{b.note}</p>}
+                </div>
+                <button
+                  type="button"
+                  disabled={deletingBatchId === b.id}
+                  onClick={() => handleDeleteBatch(b)}
+                  className="h-11 rounded-lg border border-red-200 px-3 text-xs font-semibold text-red-600 active:bg-red-50 disabled:opacity-60"
+                >
+                  {deletingBatchId === b.id ? '…' : 'Hapus'}
+                </button>
               </li>
             ))}
           </ul>
@@ -234,6 +268,7 @@ function FinishedStockList({
 }) {
   const [openId, setOpenId] = useState<string | null>(null)
   const [qty, setQty] = useState('1')
+  const [correctQty, setCorrectQty] = useState('0')
   const [saving, setSaving] = useState(false)
 
   async function writeOff(variantId: string, kind: 'spoilage' | 'giveaway') {
@@ -247,6 +282,21 @@ function FinishedStockList({
       onChanged()
     } catch {
       window.alert('Gagal mencatat. Coba lagi.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function saveCorrection(variantId: string) {
+    const n = parseInt(correctQty, 10)
+    if (Number.isNaN(n)) return
+    setSaving(true)
+    try {
+      await adjustFinishedStock(variantId, n)
+      setOpenId(null)
+      onChanged()
+    } catch {
+      window.alert('Gagal koreksi jumlah. Coba lagi.')
     } finally {
       setSaving(false)
     }
@@ -269,7 +319,11 @@ function FinishedStockList({
             <li key={f.variantId}>
               <button
                 type="button"
-                onClick={() => setOpenId(openId === f.variantId ? null : f.variantId)}
+                onClick={() => {
+                  const next = openId === f.variantId ? null : f.variantId
+                  setOpenId(next)
+                  if (next) setCorrectQty(String(f.qty))
+                }}
                 className="flex min-h-12 w-full items-center justify-between px-4 py-2 text-left"
               >
                 <span className="text-sm font-medium text-gray-900">{f.label}</span>
@@ -280,32 +334,62 @@ function FinishedStockList({
                 </span>
               </button>
               {openId === f.variantId && (
-                <div className="flex items-center gap-2 bg-gray-50 px-4 py-3">
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    value={qty}
-                    onChange={(e) => setQty(e.target.value)}
-                    aria-label={`Jumlah sisa ${f.label}`}
-                    className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
-                  />
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => writeOff(f.variantId, 'spoilage')}
-                    className="h-11 flex-1 rounded-lg border border-red-200 text-sm font-semibold text-red-600 disabled:opacity-60"
-                  >
-                    Rusak
-                  </button>
-                  <button
-                    type="button"
-                    disabled={saving}
-                    onClick={() => writeOff(f.variantId, 'giveaway')}
-                    className="h-11 flex-1 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 disabled:opacity-60"
-                  >
-                    Dibagikan
-                  </button>
+                <div className="flex flex-col gap-3 bg-gray-50 px-4 py-3">
+                  <div>
+                    <p className="mb-1 text-xs font-medium text-gray-600">
+                      Koreksi jumlah (set ke angka benar)
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        value={correctQty}
+                        onChange={(e) => setCorrectQty(e.target.value)}
+                        aria-label={`Koreksi jumlah ${f.label}`}
+                        className="h-11 w-24 rounded-lg border border-gray-300 px-2 text-right"
+                      />
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => saveCorrection(f.variantId)}
+                        className="h-11 flex-1 rounded-lg bg-brand text-sm font-semibold text-white disabled:opacity-60"
+                      >
+                        Simpan jumlah
+                      </button>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 pt-3">
+                    <p className="mb-1 text-xs font-medium text-gray-600">
+                      Tandai keluar (kurangi stok)
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        value={qty}
+                        onChange={(e) => setQty(e.target.value)}
+                        aria-label={`Jumlah sisa ${f.label}`}
+                        className="h-11 w-20 rounded-lg border border-gray-300 px-2 text-right"
+                      />
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => writeOff(f.variantId, 'spoilage')}
+                        className="h-11 flex-1 rounded-lg border border-red-200 text-sm font-semibold text-red-600 disabled:opacity-60"
+                      >
+                        Rusak
+                      </button>
+                      <button
+                        type="button"
+                        disabled={saving}
+                        onClick={() => writeOff(f.variantId, 'giveaway')}
+                        className="h-11 flex-1 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 disabled:opacity-60"
+                      >
+                        Dibagikan
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </li>

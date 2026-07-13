@@ -109,3 +109,24 @@ export async function writeOffFinished(
   })
   if (error) throw error
 }
+
+/** Batalkan batch produksi: kembalikan stok bahan & stok jadi seperti sebelum batch. */
+export async function undoProduction(batchId: string): Promise<void> {
+  const { error } = await supabase.rpc('undo_production', { p_batch_id: batchId })
+  if (error) throw error
+}
+
+/** Hapus bahan (hanya bila belum dipakai di resep). */
+export async function deleteIngredient(ingredientId: string): Promise<void> {
+  const { error } = await supabase.rpc('delete_ingredient', { p_ingredient_id: ingredientId })
+  if (error) throw error
+}
+
+/** Koreksi jumlah stok jadi ke nilai baru (kind 'adjustment'). */
+export async function adjustFinishedStock(variantId: string, newQty: number): Promise<void> {
+  const { error } = await supabase.rpc('adjust_finished_stock', {
+    p_variant_id: variantId,
+    p_new_qty: newQty,
+  })
+  if (error) throw error
+}
