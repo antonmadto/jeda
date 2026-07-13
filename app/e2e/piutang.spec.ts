@@ -5,6 +5,10 @@ import { formatRupiah } from '../src/lib/format'
 // Butuh kredensial akun test: E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
+// Test ini MENULIS data. Hanya jalan ke DB test (E2E_SUPABASE_URL), bukan produksi.
+const canWrite =
+  Boolean(process.env.E2E_SUPABASE_URL) || process.env.E2E_ALLOW_PROD_WRITES === '1'
+const skipReason = 'menulis data: butuh DB test (E2E_SUPABASE_URL) atau E2E_ALLOW_PROD_WRITES=1'
 
 const CUSTOMER = 'Uji Piutang'
 
@@ -17,7 +21,7 @@ async function login(page: Page) {
 }
 
 test('alur belum lunas sampai lunas + riwayat pelanggan akurat', async ({ page }) => {
-  test.skip(!email || !password, 'butuh E2E_EMAIL dan E2E_PASSWORD')
+  test.skip(!email || !password || !canWrite, skipReason)
   await login(page)
 
   // 1) Catat penjualan belum lunas dengan pelanggan

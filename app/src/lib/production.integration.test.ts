@@ -15,7 +15,10 @@ const url = process.env.E2E_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL
 const key = process.env.E2E_SUPABASE_ANON_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
-const enabled = Boolean(url && key && email && password)
+// Semua test di file ini MENULIS data — hanya jalan ke DB test, bukan produksi.
+const canWrite =
+  Boolean(process.env.E2E_SUPABASE_URL) || process.env.E2E_ALLOW_PROD_WRITES === '1'
+const enabled = Boolean(url && key && email && password) && canWrite
 
 const db = createClient(url, key, { auth: { persistSession: false } })
 const cleanups: (() => Promise<void>)[] = []

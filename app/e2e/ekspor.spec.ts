@@ -6,6 +6,10 @@ import readXlsxFile from 'read-excel-file/node'
 // Butuh kredensial akun test: E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
+// Test ini MENULIS data. Hanya jalan ke DB test (E2E_SUPABASE_URL), bukan produksi.
+const canWrite =
+  Boolean(process.env.E2E_SUPABASE_URL) || process.env.E2E_ALLOW_PROD_WRITES === '1'
+const skipReason = 'menulis data: butuh DB test (E2E_SUPABASE_URL) atau E2E_ALLOW_PROD_WRITES=1'
 
 async function login(page: Page) {
   await page.goto('/')
@@ -18,7 +22,7 @@ async function login(page: Page) {
 test('ekspor menghasilkan .xlsx yang bisa dibaca kembali (sheet Penjualan valid)', async ({
   page,
 }) => {
-  test.skip(!email || !password, 'butuh E2E_EMAIL dan E2E_PASSWORD')
+  test.skip(!email || !password || !canWrite, skipReason)
   await login(page)
 
   // 1) Pastikan ada data: buat satu transaksi hari ini

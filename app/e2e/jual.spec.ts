@@ -9,6 +9,10 @@ import { formatRupiah } from '../src/lib/format'
 
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
+// Test ini MENULIS data. Hanya jalan ke DB test (E2E_SUPABASE_URL), bukan produksi.
+const canWrite =
+  Boolean(process.env.E2E_SUPABASE_URL) || process.env.E2E_ALLOW_PROD_WRITES === '1'
+const skipReason = 'menulis data: butuh DB test (E2E_SUPABASE_URL) atau E2E_ALLOW_PROD_WRITES=1'
 
 async function login(page: Page) {
   await page.goto('/')
@@ -30,7 +34,7 @@ async function deleteNewestSale(page: Page) {
 test('transaksi lapak: 1 botol Immune 500 ml, cash lunas, muncul di daftar lalu dihapus', async ({
   page,
 }) => {
-  test.skip(!email || !password, 'butuh E2E_EMAIL dan E2E_PASSWORD')
+  test.skip(!email || !password || !canWrite, skipReason)
   await login(page)
 
   await page.getByRole('radio', { name: 'Lapak' }).click()
@@ -56,7 +60,7 @@ test('transaksi lapak: 1 botol Immune 500 ml, cash lunas, muncul di daftar lalu 
 })
 
 test('transaksi bulk 50 pcs: diskon 1.000/botol terhitung dan tersimpan', async ({ page }) => {
-  test.skip(!email || !password, 'butuh E2E_EMAIL dan E2E_PASSWORD')
+  test.skip(!email || !password || !canWrite, skipReason)
   await login(page)
 
   await page.getByRole('radio', { name: 'Bulk' }).click()

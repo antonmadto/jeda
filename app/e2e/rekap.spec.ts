@@ -5,6 +5,10 @@ import { formatRupiah } from '../src/lib/format'
 // Butuh kredensial akun test: E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
 const email = process.env.E2E_EMAIL
 const password = process.env.E2E_PASSWORD
+// Test pengeluaran MENULIS data — hanya ke DB test; test lain baca-saja.
+const canWrite =
+  Boolean(process.env.E2E_SUPABASE_URL) || process.env.E2E_ALLOW_PROD_WRITES === '1'
+const skipReason = 'menulis data: butuh DB test (E2E_SUPABASE_URL) atau E2E_ALLOW_PROD_WRITES=1'
 
 async function login(page: Page) {
   await page.goto('/')
@@ -17,7 +21,7 @@ async function login(page: Page) {
 test('rekap harian tampil, tambah lalu hapus pengeluaran, laba kotor menyesuaikan', async ({
   page,
 }) => {
-  test.skip(!email || !password, 'butuh E2E_EMAIL dan E2E_PASSWORD')
+  test.skip(!email || !password || !canWrite, skipReason)
   await login(page)
   await page.getByRole('link', { name: 'Rekap' }).click()
 
