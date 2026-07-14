@@ -166,10 +166,11 @@ test.skipIf(!enabled)(
 )
 
 test.skipIf(!enabled)(
-  'delete_ingredient: bahan tanpa resep terhapus; bahan dalam resep ditolak',
+  'delete_ingredient: bahan terhapus beserta baris resep yang memakainya (cascade)',
   async () => {
     await db.auth.signInWithPassword({ email: email!, password: password! })
 
+    // bahan sementara + baris resep sementara di satu varian
     const { data: temp } = await db
       .from('ingredients')
       .insert({ name: 'ZZ Bahan Uji Hapus', unit: 'gram', cost_per_unit: 1 })
@@ -177,23 +178,22 @@ test.skipIf(!enabled)(
       .single()
     const tempId = temp!.id as string
     cleanups.push(async () => {
+      await db.from('recipes').delete().eq('ingredient_id', tempId)
       await db.from('ingredients').delete().eq('id', tempId)
     })
 
+    const { data: variant } = await db.from('product_variants').select('id').limit(1).single()
+    await db
+      .from('recipes')
+      .insert({ variant_id: variant!.id, ingredient_id: tempId, qty: 5 })
+
     const { error: delErr } = await db.rpc('delete_ingredient', { p_ingredient_id: tempId })
     expect(delErr).toBeNull()
+
+    // bahan hilang DAN baris resepnya ikut hilang
     const { data: gone } = await db.from('ingredients').select('id').eq('id', tempId)
     expect(gone).toEqual([])
-
-    const { data: recipeLine } = await db
-      .from('recipes')
-      .select('ingredient_id')
-      .limit(1)
-      .single()
-    const { error: guardErr } = await db.rpc('delete_ingredient', {
-      p_ingredient_id: recipeLine!.ingredient_id,
-    })
-    expect(guardErr).not.toBeNull()
-    expect(guardErr!.message).toMatch(/resep/i)
+    const { data: recipeGone } = await db.from('recipes').select('id').eq('ingredient_id', tempId)
+    expect(recipeGone).toEqual([])
   },
 )

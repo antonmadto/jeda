@@ -127,13 +127,22 @@ function IngredientEditor({ row, onDone }: { row: IngredientRow; onDone: () => v
   }
 
   async function remove() {
-    if (!window.confirm(`Hapus bahan "${row.name}"? Tindakan ini tidak bisa dibatalkan.`)) return
+    // cek dulu dipakai di berapa resep, supaya konfirmasinya jujur soal dampak
+    const { count } = await supabase
+      .from('recipes')
+      .select('id', { count: 'exact', head: true })
+      .eq('ingredient_id', row.id)
+    const dampak =
+      count && count > 0
+        ? ` Bahan ini dipakai di ${count} resep — akan ikut dicabut dari resep itu dan HPP-nya berubah.`
+        : ''
+    if (!window.confirm(`Hapus bahan "${row.name}"?${dampak} Tindakan ini tidak bisa dibatalkan.`))
+      return
     setSaving(true)
     try {
       await deleteIngredient(row.id)
       onDone()
     } catch (e) {
-      // fungsi DB memberi pesan jelas bila bahan masih dipakai di resep
       const msg = (e as { message?: string })?.message
       window.alert(msg || 'Gagal menghapus bahan. Coba lagi.')
     } finally {
