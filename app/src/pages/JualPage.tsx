@@ -24,6 +24,7 @@ export default function JualPage() {
   const [warnings, setWarnings] = useState<StockWarning[]>([])
   const [savedFlash, setSavedFlash] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [customDiscount, setCustomDiscount] = useState(0)
 
   const { channel, lines, editingSaleId, setChannel, addOne, setQty, clear, loadForEdit } =
     useCartStore()
@@ -53,8 +54,8 @@ export default function JualPage() {
       const v = variantById[l.variantId]
       return v ? [{ variantId: l.variantId, category: v.category, price: v.price, qty: l.qty }] : []
     })
-    return computePrice(items, channel, new Date())
-  }, [lines, channel, variantById])
+    return computePrice(items, channel, new Date(), customDiscount)
+  }, [lines, channel, variantById, customDiscount])
 
   async function handleSave(choice: PaymentChoice) {
     setSaving(true)
@@ -78,6 +79,7 @@ export default function JualPage() {
       })
       setWarnings(res.stockWarnings)
       clear()
+      setCustomDiscount(0)
       setSheetOpen(false)
       setRefreshKey((k) => k + 1)
       refreshReceivables()
@@ -173,13 +175,18 @@ export default function JualPage() {
         editing={editingSaleId !== null}
         onSetQty={setQty}
         onPay={() => setSheetOpen(true)}
-        onCancel={clear}
+        onCancel={() => {
+          clear()
+          setCustomDiscount(0)
+        }}
       />
 
       {sheetOpen && (
         <PaymentSheet
           price={price}
           saving={saving}
+          customDiscount={customDiscount}
+          onCustomDiscountChange={setCustomDiscount}
           onSave={handleSave}
           onClose={() => setSheetOpen(false)}
         />

@@ -48,8 +48,10 @@ Ini layar utama, tab **Jual** di kiri bawah.
    jumlahnya di keranjang bawah dengan tombol **−** dan **+**.
 3. Ketuk **Bayar**.
 4. Pilih **Cash** atau **QRIS**, dan **Lunas** atau **Belum lunas**.
-5. (Boleh dilewati) Isi nama pelanggan bila ingin dicatat.
-6. Ketuk **Simpan**. Selesai.
+5. (Boleh dilewati) Isi **Diskon tambahan** kalau memberi potongan khusus —
+   total langsung menyesuaikan.
+6. (Boleh dilewati) Isi nama pelanggan bila ingin dicatat.
+7. Ketuk **Simpan**. Selesai.
 
 Harga sudah otomatis, tidak perlu dihitung:
 - **Jumat Berkah**: tiap Jumat, semua *fresh juice* dan *creamy* otomatis jadi

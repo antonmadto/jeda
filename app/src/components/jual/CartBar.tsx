@@ -83,22 +83,28 @@ export default function CartBar({
       </ul>
       <div className="mt-1.5 flex flex-col gap-0.5 text-sm">
         {price.discount > 0 && (
-          <>
-            <div className="flex justify-between font-medium text-muted">
-              <span>Subtotal</span>
-              <span>{formatRupiah(price.subtotal)}</span>
-            </div>
-            <div className="flex justify-between font-bold text-money-dark">
-              <span>
-                {price.promoApplied
-                  ? `Promo ${PROMO_LABELS[price.promoApplied]}`
-                  : price.bulkPerBottle > 0
-                    ? `Diskon bulk ${formatRupiah(price.bulkPerBottle)}/botol`
-                    : 'Diskon'}
-              </span>
-              <span data-testid="cart-discount">−{formatRupiah(price.discount)}</span>
-            </div>
-          </>
+          <div className="flex justify-between font-medium text-muted">
+            <span>Subtotal</span>
+            <span>{formatRupiah(price.subtotal)}</span>
+          </div>
+        )}
+        {price.promoBulkDiscount > 0 && (
+          <div className="flex justify-between font-bold text-money-dark">
+            <span>
+              {price.promoApplied
+                ? `Promo ${PROMO_LABELS[price.promoApplied]}`
+                : price.bulkPerBottle > 0
+                  ? `Diskon bulk ${formatRupiah(price.bulkPerBottle)}/botol`
+                  : 'Diskon'}
+            </span>
+            <span data-testid="cart-discount">−{formatRupiah(price.promoBulkDiscount)}</span>
+          </div>
+        )}
+        {price.manualDiscount > 0 && (
+          <div className="flex justify-between font-bold text-money-dark">
+            <span>Diskon tambahan</span>
+            <span>−{formatRupiah(price.manualDiscount)}</span>
+          </div>
         )}
         <div className="flex items-center justify-between">
           <span className="text-[14.5px] font-extrabold text-ink">

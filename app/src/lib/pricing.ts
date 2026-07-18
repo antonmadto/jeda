@@ -43,13 +43,21 @@ export type PricedItem = {
 export type PriceResult = {
   items: PricedItem[]
   subtotal: number // total harga normal
-  discount: number // subtotal - total
+  discount: number // subtotal - total (promo/bulk + diskon manual)
+  promoBulkDiscount: number // bagian diskon dari promo/bulk saja
+  manualDiscount: number // diskon manual yang benar-benar terpakai (sudah di-clamp)
   total: number
   promoApplied: PromoName | null
   bulkPerBottle: number // potongan per botol untuk kanal bulk (0 kalau tidak kena)
 }
 
-export function computePrice(items: CartItem[], channel: Channel, date: Date): PriceResult {
+export function computePrice(
+  items: CartItem[],
+  channel: Channel,
+  date: Date,
+  /** Diskon manual per transaksi (integer rupiah), diisi kasir. */
+  customDiscount = 0,
+): PriceResult {
   const active = items.filter((i) => i.qty > 0)
   const subtotal = active.reduce((sum, i) => sum + i.price * i.qty, 0)
 
@@ -83,6 +91,19 @@ export function computePrice(items: CartItem[], channel: Channel, date: Date): P
     return { variantId: i.variantId, qty: i.qty, unitPrice, lineTotal: unitPrice * i.qty }
   })
 
-  const total = priced.reduce((sum, i) => sum + i.lineTotal, 0)
-  return { items: priced, subtotal, discount: subtotal - total, total, promoApplied, bulkPerBottle }
+  const itemsTotal = priced.reduce((sum, i) => sum + i.lineTotal, 0)
+  // diskon manual: integer, tidak negatif, tidak melebihi total setelah promo/bulk
+  const manualDiscount = Math.min(Math.max(0, Math.floor(customDiscount)), itemsTotal)
+  const total = itemsTotal - manualDiscount
+
+  return {
+    items: priced,
+    subtotal,
+    discount: subtotal - total,
+    promoBulkDiscount: subtotal - itemsTotal,
+    manualDiscount,
+    total,
+    promoApplied,
+    bulkPerBottle,
+  }
 }

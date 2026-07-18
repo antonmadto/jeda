@@ -121,6 +121,38 @@ test('promo dan diskon bulk tidak digabung: kanal bulk di hari promo hanya kena 
   expect(rSabtu.total).toBe(50 * 14000) // potongan bulk 1.000, bukan 3.000
 })
 
+test('diskon manual: dipotong dari total, tercatat terpisah dari promo/bulk', () => {
+  const r = computePrice([creamy(2)], 'lapak', SENIN, 5000)
+  expect(r.subtotal).toBe(30000)
+  expect(r.manualDiscount).toBe(5000)
+  expect(r.promoBulkDiscount).toBe(0)
+  expect(r.discount).toBe(5000)
+  expect(r.total).toBe(25000)
+})
+
+test('diskon manual digabung promo: keduanya terhitung, bagian masing-masing jelas', () => {
+  // Sabtu: creamy 15.000 -> 12.000 (promo 3.000), lalu manual 2.000
+  const r = computePrice([creamy(1)], 'lapak', SABTU, 2000)
+  expect(r.promoBulkDiscount).toBe(3000)
+  expect(r.manualDiscount).toBe(2000)
+  expect(r.discount).toBe(5000)
+  expect(r.total).toBe(10000)
+  expect(r.promoApplied).toBe('sabtu_ceria')
+})
+
+test('diskon manual di-clamp: tidak melebihi total, tidak negatif, dibulatkan ke bawah', () => {
+  expect(computePrice([creamy(1)], 'lapak', SENIN, 999999).total).toBe(0)
+  expect(computePrice([creamy(1)], 'lapak', SENIN, 999999).manualDiscount).toBe(15000)
+  expect(computePrice([creamy(1)], 'lapak', SENIN, -5000).total).toBe(15000)
+  expect(computePrice([creamy(1)], 'lapak', SENIN, 1500.75).manualDiscount).toBe(1500)
+})
+
+test('tanpa argumen diskon manual: perilaku lama tak berubah', () => {
+  const r = computePrice([creamy(1)], 'lapak', SENIN)
+  expect(r.manualDiscount).toBe(0)
+  expect(r.total).toBe(15000)
+})
+
 test('item qty 0 diabaikan, keranjang kosong menghasilkan 0', () => {
   const r = computePrice([fresh500(0)], 'lapak', SENIN)
   expect(r.items).toHaveLength(0)

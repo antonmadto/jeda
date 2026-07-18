@@ -14,11 +14,15 @@ export type PaymentChoice = {
 export default function PaymentSheet({
   price,
   saving,
+  customDiscount,
+  onCustomDiscountChange,
   onSave,
   onClose,
 }: {
   price: PriceResult
   saving: boolean
+  customDiscount: number
+  onCustomDiscountChange: (n: number) => void
   onSave: (choice: PaymentChoice) => void
   onClose: () => void
 }) {
@@ -77,9 +81,15 @@ export default function PaymentSheet({
           </button>
         </div>
 
-        <p className="mb-4 text-center text-[34px] font-extrabold tracking-[-.02em] text-ink">
+        <p className="mb-1 text-center text-[34px] font-extrabold tracking-[-.02em] text-ink">
           {formatRupiah(price.total)}
         </p>
+        {price.manualDiscount > 0 && (
+          <p className="mb-3 text-center text-xs font-bold text-money-dark">
+            sudah termasuk diskon tambahan −{formatRupiah(price.manualDiscount)}
+          </p>
+        )}
+        {price.manualDiscount === 0 && <div className="mb-3" />}
 
         <div className="mb-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Metode bayar">
           {(['cash', 'qris'] as const).map((p) => (
@@ -119,6 +129,26 @@ export default function PaymentSheet({
               {s === 'lunas' ? 'Lunas' : 'Belum lunas'}
             </button>
           ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="text-[13px] font-bold text-ink-2" htmlFor="custom-discount">
+            Diskon tambahan (opsional)
+          </label>
+          <input
+            id="custom-discount"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="0"
+            aria-label="Diskon tambahan"
+            value={customDiscount === 0 ? '' : customDiscount}
+            onChange={(e) => {
+              const n = parseInt(e.target.value, 10)
+              onCustomDiscountChange(Number.isNaN(n) ? 0 : n)
+            }}
+            className="mt-1 h-12 w-full rounded-[14px] border-[1.5px] border-border-soft px-3 text-ink placeholder:text-faint"
+          />
         </div>
 
         <div className="mb-4">
