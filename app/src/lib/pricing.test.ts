@@ -10,6 +10,7 @@ const SENIN = new Date('2026-07-13T10:00:00+07:00')
 const fresh500 = (qty: number): CartItem => ({ variantId: 'f500', category: 'fresh', price: 38000, qty })
 const fresh250 = (qty: number): CartItem => ({ variantId: 'f250', category: 'fresh', price: 18000, qty })
 const creamy = (qty: number): CartItem => ({ variantId: 'c250', category: 'creamy', price: 15000, qty })
+const creamy500 = (qty: number): CartItem => ({ variantId: 'c500', category: 'creamy', price: 35000, qty })
 const ramu = (qty: number): CartItem => ({ variantId: 'r250', category: 'ramu', price: 15000, qty })
 
 test('harga normal: hari biasa kanal lapak, tanpa promo tanpa diskon', () => {
@@ -21,7 +22,7 @@ test('harga normal: hari biasa kanal lapak, tanpa promo tanpa diskon', () => {
   expect(r.bulkPerBottle).toBe(0)
 })
 
-test('Jumat Berkah: fresh jadi 15.000 di lapak, nama promo tercatat', () => {
+test('Jumat Berkah: semua varian fresh jadi 15.000 di lapak', () => {
   const r = computePrice([fresh500(1), fresh250(2)], 'lapak', JUMAT)
   expect(r.items.find((i) => i.variantId === 'f500')?.unitPrice).toBe(15000)
   expect(r.items.find((i) => i.variantId === 'f250')?.unitPrice).toBe(15000)
@@ -31,37 +32,55 @@ test('Jumat Berkah: fresh jadi 15.000 di lapak, nama promo tercatat', () => {
   expect(r.promoApplied).toBe('jumat_berkah')
 })
 
-test('Sabtu Ceria: fresh jadi 15.000 di cfd, nama promo sabtu_ceria', () => {
-  const r = computePrice([fresh500(1)], 'cfd', SABTU)
-  expect(r.total).toBe(15000)
-  expect(r.promoApplied).toBe('sabtu_ceria')
+test('Jumat Berkah: creamy juga jadi 15.000 (aturan 18 Jul 2026)', () => {
+  const r = computePrice([creamy500(1), creamy(1)], 'lapak', JUMAT)
+  expect(r.items.find((i) => i.variantId === 'c500')?.unitPrice).toBe(15000)
+  expect(r.items.find((i) => i.variantId === 'c250')?.unitPrice).toBe(15000) // sudah 15rb, tetap
+  expect(r.total).toBe(30000)
+  expect(r.promoApplied).toBe('jumat_berkah')
 })
 
-test('creamy dan ramu tidak kena promo Jumat Berkah', () => {
-  const r = computePrice([creamy(2), ramu(1)], 'lapak', JUMAT)
-  expect(r.total).toBe(45000)
+test('Jumat Berkah: ramu tidak ikut promo', () => {
+  const r = computePrice([ramu(2)], 'lapak', JUMAT)
+  expect(r.total).toBe(30000)
   expect(r.discount).toBe(0)
   expect(r.promoApplied).toBeNull()
 })
 
-test('keranjang campur di hari promo: fresh dipotong, creamy tetap normal', () => {
-  const r = computePrice([fresh500(1), creamy(1)], 'cfd', SABTU)
-  expect(r.items.find((i) => i.variantId === 'f500')?.unitPrice).toBe(15000)
-  expect(r.items.find((i) => i.variantId === 'c250')?.unitPrice).toBe(15000) // harga normalnya memang 15.000
-  expect(r.total).toBe(30000)
+test('Sabtu Ceria: potongan 3.000/botol untuk fresh di cfd', () => {
+  const r = computePrice([fresh500(1), fresh250(2)], 'cfd', SABTU)
+  expect(r.items.find((i) => i.variantId === 'f500')?.unitPrice).toBe(35000)
+  expect(r.items.find((i) => i.variantId === 'f250')?.unitPrice).toBe(15000)
+  expect(r.total).toBe(65000)
+  expect(r.discount).toBe(9000) // 3.000 x 3 botol
   expect(r.promoApplied).toBe('sabtu_ceria')
 })
 
-test('promo hanya kanal lapak dan cfd: online di hari Jumat tetap normal', () => {
-  const r = computePrice([fresh500(1)], 'online', JUMAT)
-  expect(r.total).toBe(38000)
-  expect(r.promoApplied).toBeNull()
+test('Sabtu Ceria: creamy juga dipotong 3.000; ramu tetap normal', () => {
+  const r = computePrice([creamy(1), creamy500(1), ramu(1)], 'lapak', SABTU)
+  expect(r.items.find((i) => i.variantId === 'c250')?.unitPrice).toBe(12000)
+  expect(r.items.find((i) => i.variantId === 'c500')?.unitPrice).toBe(32000)
+  expect(r.items.find((i) => i.variantId === 'r250')?.unitPrice).toBe(15000)
+  expect(r.total).toBe(59000)
+  expect(r.discount).toBe(6000)
+  expect(r.promoApplied).toBe('sabtu_ceria')
 })
 
-test('promo tidak pernah menaikkan harga: fresh di bawah 15.000 tetap', () => {
-  const murah: CartItem = { variantId: 'f100', category: 'fresh', price: 10000, qty: 1 }
+test('promo hanya kanal lapak dan cfd: online tetap normal di hari promo', () => {
+  expect(computePrice([fresh500(1)], 'online', JUMAT).promoApplied).toBeNull()
+  expect(computePrice([fresh500(1)], 'online', SABTU).total).toBe(38000)
+})
+
+test('Jumat Berkah tidak pernah menaikkan harga: item di bawah 15.000 tetap', () => {
+  const murah: CartItem = { variantId: 'p200', category: 'fresh', price: 12000, qty: 1 }
   const r = computePrice([murah], 'lapak', JUMAT)
-  expect(r.total).toBe(10000)
+  expect(r.total).toBe(12000)
+})
+
+test('Sabtu Ceria tidak menghasilkan harga negatif', () => {
+  const supermurah: CartItem = { variantId: 'x', category: 'creamy', price: 2000, qty: 1 }
+  const r = computePrice([supermurah], 'lapak', SABTU)
+  expect(r.total).toBe(0)
 })
 
 test('diskon bulk: 49 botol belum kena, 50 potong 1.000 per botol', () => {
@@ -76,16 +95,12 @@ test('diskon bulk: 49 botol belum kena, 50 potong 1.000 per botol', () => {
 })
 
 test('diskon bulk bertingkat: 100 potong 2.000, 500 potong 3.000', () => {
-  const r100 = computePrice([creamy(100)], 'bulk', SENIN)
-  expect(r100.total).toBe(100 * 13000)
-
-  const r500 = computePrice([creamy(500)], 'bulk', SENIN)
-  expect(r500.total).toBe(500 * 12000)
+  expect(computePrice([creamy(100)], 'bulk', SENIN).total).toBe(100 * 13000)
+  expect(computePrice([creamy(500)], 'bulk', SENIN).total).toBe(500 * 12000)
 })
 
 test('tingkat diskon bulk dihitung dari total kuantitas semua item', () => {
   const r = computePrice([creamy(30), fresh250(25)], 'bulk', SENIN)
-  // total 55 botol -> potong 1.000 per botol untuk semua item
   expect(r.bulkPerBottle).toBe(1000)
   expect(r.total).toBe(30 * 14000 + 25 * 17000)
 })
@@ -96,11 +111,14 @@ test('diskon bulk hanya kanal bulk: 60 botol di lapak tetap normal', () => {
   expect(r.bulkPerBottle).toBe(0)
 })
 
-test('promo dan diskon bulk tidak digabung: kanal bulk di hari Jumat hanya kena diskon bulk', () => {
-  const r = computePrice([fresh500(50)], 'bulk', JUMAT)
-  expect(r.promoApplied).toBeNull()
-  expect(r.bulkPerBottle).toBe(1000)
-  expect(r.total).toBe(50 * 37000) // 38.000 - 1.000, bukan 15.000
+test('promo dan diskon bulk tidak digabung: kanal bulk di hari promo hanya kena diskon bulk', () => {
+  const rJumat = computePrice([fresh500(50)], 'bulk', JUMAT)
+  expect(rJumat.promoApplied).toBeNull()
+  expect(rJumat.total).toBe(50 * 37000) // 38.000 - 1.000, bukan 15.000
+
+  const rSabtu = computePrice([creamy(50)], 'bulk', SABTU)
+  expect(rSabtu.promoApplied).toBeNull()
+  expect(rSabtu.total).toBe(50 * 14000) // potongan bulk 1.000, bukan 3.000
 })
 
 test('item qty 0 diabaikan, keranjang kosong menghasilkan 0', () => {

@@ -1,12 +1,15 @@
 import { dayOfWeekWIB } from './date'
 
 // Mesin harga JE&DA. Fungsi murni, tanpa akses DB/UI.
-// Aturan (CLAUDE.md):
-// 1. Jumat Berkah / Sabtu Ceria: kategori fresh jadi 15.000/botol, hanya kanal lapak & cfd.
+// Aturan (update pemilik, 18 Jul 2026):
+// 1. Jumat Berkah: semua varian fresh juice & creamy jadi 15.000/botol.
+//    Sabtu Ceria: potongan 3.000/botol untuk fresh juice & creamy.
+//    Keduanya hanya kanal lapak & cfd; ramu tidak ikut promo.
 // 2. Diskon bulk hanya kanal bulk, per botol berdasar total kuantitas pesanan.
 // 3. Promo dan diskon bulk tidak pernah digabung (kanal bulk tidak kena promo).
 
-export const PROMO_PRICE = 15000
+export const PROMO_PRICE = 15000 // Jumat Berkah: harga flat per botol
+export const SABTU_DISCOUNT = 3000 // Sabtu Ceria: potongan per botol
 
 export const BULK_TIERS = [
   { minQty: 500, perBottle: 3000 },
@@ -64,9 +67,15 @@ export function computePrice(items: CartItem[], channel: Channel, date: Date): P
   let promoApplied: PromoName | null = null
   const priced: PricedItem[] = active.map((i) => {
     let unitPrice = i.price
-    if (promoEligible && i.category === 'fresh') {
-      // promo tidak pernah menaikkan harga
-      unitPrice = Math.min(PROMO_PRICE, i.price)
+    const promoCategory = i.category === 'fresh' || i.category === 'creamy'
+    if (promoEligible && promoCategory) {
+      if (promoName === 'jumat_berkah') {
+        // harga flat; promo tidak pernah menaikkan harga
+        unitPrice = Math.min(PROMO_PRICE, i.price)
+      } else {
+        // sabtu_ceria: potongan per botol
+        unitPrice = Math.max(0, i.price - SABTU_DISCOUNT)
+      }
       promoApplied = promoName
     } else if (bulkPerBottle > 0) {
       unitPrice = Math.max(0, i.price - bulkPerBottle)

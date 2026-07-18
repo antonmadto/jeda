@@ -44,13 +44,14 @@ npx supabase db push # terapkan migrasi (butuh supabase cli login)
 | Batch produksi | Pembuatan jus dini hari, jam 3 sd 5 pagi, mengurangi stok bahan dan menambah stok jadi |
 | Stok jadi | Botol siap jual di freezer, umur simpan 3 sd 5 hari |
 | HPP | Biaya bahan plus kemasan per botol, dihitung dari resep |
-| Jumat Berkah / Sabtu Ceria | Promo, semua fresh juice jadi 15.000 pada hari Jumat dan Sabtu |
+| Jumat Berkah | Promo Jumat: semua varian fresh juice & creamy jadi 15.000 |
+| Sabtu Ceria | Promo Sabtu: potongan 3.000 per botol untuk fresh juice & creamy |
 | Diskon bulk | 50 pcs potong 1.000 per botol, 100 pcs potong 2.000, 500 pcs potong 3.000 |
 | Rekap harian | Layar ringkasan satu hari yang di-screenshot pemilik tiap malam sebagai bukti |
 
 ## Aturan Bisnis Penting
 
-1. Promo Jumat Berkah dan Sabtu Ceria hanya berlaku kategori fresh juice, bukan creamy atau ramu, hanya di kanal lapak dan cfd.
+1. Promo Jumat Berkah (flat 15.000) dan Sabtu Ceria (potongan 3.000) berlaku untuk kategori fresh juice dan creamy (ramu tidak), hanya di kanal lapak dan cfd. (Update pemilik 18 Jul 2026.)
 2. Diskon bulk hanya kanal bulk, dihitung per botol berdasarkan total kuantitas pesanan.
 3. Promo dan diskon bulk tidak digabung.
 4. Penjualan boleh ditandai `belum_lunas` untuk pelanggan dekat, masuk daftar piutang.

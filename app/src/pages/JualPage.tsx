@@ -101,6 +101,10 @@ export default function JualPage() {
 
   const dow = dayOfWeekWIB()
   const promoLabel = dow === 5 ? 'Jumat Berkah' : dow === 6 ? 'Sabtu Ceria' : null
+  const promoSub =
+    dow === 5
+      ? 'Fresh juice & creamy jadi Rp15.000'
+      : 'Potongan Rp3.000 fresh juice & creamy'
   const promoActive = promoLabel !== null && (channel === 'lapak' || channel === 'cfd')
 
   if (loadStatus === 'loading') return <p className="text-sm font-medium text-muted">Memuat produk…</p>
@@ -121,9 +125,7 @@ export default function JualPage() {
           </span>
           <span className="flex min-w-0 flex-col">
             <span className="text-sm font-extrabold text-brand-deep">{promoLabel}</span>
-            <span className="text-[12.5px] font-medium text-[#B25578]">
-              Semua fresh juice jadi Rp15.000
-            </span>
+            <span className="text-[12.5px] font-medium text-[#B25578]">{promoSub}</span>
           </span>
         </div>
       )}

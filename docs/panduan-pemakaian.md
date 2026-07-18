@@ -52,8 +52,10 @@ Ini layar utama, tab **Jual** di kiri bawah.
 6. Ketuk **Simpan**. Selesai.
 
 Harga sudah otomatis, tidak perlu dihitung:
-- **Jumat Berkah / Sabtu Ceria**: tiap Jumat & Sabtu, semua *fresh juice* otomatis
-  jadi Rp15.000 di kanal Lapak dan CFD. Muncul tulisan promonya di atas.
+- **Jumat Berkah**: tiap Jumat, semua *fresh juice* dan *creamy* otomatis jadi
+  Rp15.000 di kanal Lapak dan CFD.
+- **Sabtu Ceria**: tiap Sabtu, *fresh juice* dan *creamy* otomatis dipotong
+  Rp3.000 per botol. Muncul tulisan promonya di atas.
 - **Diskon bulk**: di kanal Bulk, potongan per botol otomatis mengikuti jumlah
   pesanan (50 pcs, 100 pcs, 500 pcs).
 
