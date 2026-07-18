@@ -46,6 +46,13 @@ export default function LainnyaPage() {
           <span className="text-[#C4B1BA]">›</span>
         </Link>
         <Link
+          to="/lainnya/aset"
+          className="flex h-[58px] items-center justify-between border-b border-line px-[18px]"
+        >
+          <span className="font-bold text-ink">Aset Usaha</span>
+          <span className="text-[#C4B1BA]">›</span>
+        </Link>
+        <Link
           to="/lainnya/ekspor"
           className="flex h-[58px] items-center justify-between px-[18px]"
         >

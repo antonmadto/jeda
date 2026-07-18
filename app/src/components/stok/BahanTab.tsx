@@ -4,6 +4,7 @@ import { fetchIngredients } from '../../lib/inventory'
 import type { IngredientRow } from '../../lib/inventory'
 import { adjustIngredientStock, deleteIngredient } from '../../lib/stock'
 import { formatRupiah } from '../../lib/format'
+import CatatBelanja from './CatatBelanja'
 
 const UNIT_OPTIONS = ['gram', 'ml', 'pcs'] as const
 
@@ -89,6 +90,8 @@ export default function BahanTab() {
           + Bahan baru
         </button>
       )}
+
+      <CatatBelanja ingredients={rows} onChanged={() => setRefreshKey((k) => k + 1)} />
     </div>
   )
 }

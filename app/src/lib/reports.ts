@@ -1,7 +1,8 @@
 import type { Channel } from './pricing'
 
 // Semua perhitungan rekap adalah fungsi murni, teruji terhadap data hitung tangan.
-// Uang integer rupiah. HPP terjual memakai HPP resep saat ini (varian tanpa resep = 0).
+// Uang integer rupiah. HPP terjual mengutamakan hpp_at_sale (dibekukan saat
+// transaksi); bila null, fallback ke HPP resep terkini (varian tanpa resep = 0).
 
 export type ExpenseCategory =
   | 'bahan'
@@ -11,6 +12,9 @@ export type ExpenseCategory =
   | 'galon'
   | 'es'
   | 'lainnya'
+  | 'sewa'
+  | 'gaji'
+  | 'promosi'
 
 export const EXPENSE_CATEGORIES: { key: ExpenseCategory; label: string }[] = [
   { key: 'bahan', label: 'Bahan' },
@@ -19,10 +23,19 @@ export const EXPENSE_CATEGORIES: { key: ExpenseCategory; label: string }[] = [
   { key: 'bensin', label: 'Bensin' },
   { key: 'galon', label: 'Galon' },
   { key: 'es', label: 'Es' },
+  { key: 'sewa', label: 'Sewa' },
+  { key: 'gaji', label: 'Gaji' },
+  { key: 'promosi', label: 'Promosi' },
   { key: 'lainnya', label: 'Lainnya' },
 ]
 
-export type SaleItemRecord = { variantId: string; qty: number; lineTotal: number }
+export type SaleItemRecord = {
+  variantId: string
+  qty: number
+  lineTotal: number
+  /** HPP per botol yang dibekukan saat transaksi. null → pakai biaya resep terkini. */
+  hppAtSale?: number | null
+}
 
 export type SaleRecord = {
   channel: Channel
@@ -95,7 +108,10 @@ function aggregate(
     for (const item of sale.items) {
       bottles += item.qty
       ch.bottles += item.qty
-      hppSold += item.qty * (hppByVariant.get(item.variantId) ?? 0)
+      // Utamakan HPP yang dibekukan saat transaksi (hppAtSale); bila null/kosong
+      // (varian tanpa resep atau data lama belum di-backfill) pakai biaya terkini.
+      const hppPerBottle = item.hppAtSale ?? hppByVariant.get(item.variantId) ?? 0
+      hppSold += item.qty * hppPerBottle
 
       const meta = variantMeta.get(item.variantId)
       const productId = meta?.productId ?? item.variantId

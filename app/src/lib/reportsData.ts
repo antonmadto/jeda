@@ -48,7 +48,7 @@ type SaleRow = {
   payment: 'cash' | 'qris'
   total: number
   customer_id: string | null
-  sale_items: { variant_id: string; qty: number; line_total: number }[]
+  sale_items: { variant_id: string; qty: number; line_total: number; hpp_at_sale: number | null }[]
 }
 
 function toSaleRecord(r: SaleRow): SaleRecord {
@@ -61,6 +61,7 @@ function toSaleRecord(r: SaleRow): SaleRecord {
       variantId: i.variant_id,
       qty: i.qty,
       lineTotal: i.line_total,
+      hppAtSale: i.hpp_at_sale,
     })),
   }
 }
@@ -68,7 +69,7 @@ function toSaleRecord(r: SaleRow): SaleRecord {
 async function fetchSalesBetween(startISO: string, endExclusiveISO: string): Promise<SaleRow[]> {
   const { data, error } = await supabase
     .from('sales')
-    .select('sold_at, channel, payment, total, customer_id, sale_items (variant_id, qty, line_total)')
+    .select('sold_at, channel, payment, total, customer_id, sale_items (variant_id, qty, line_total, hpp_at_sale)')
     .gte('sold_at', startISO)
     .lt('sold_at', endExclusiveISO)
     .order('sold_at')

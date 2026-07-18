@@ -1,6 +1,6 @@
 # Rencana Implementasi Aplikasi JE&DA
 
-Rencana eksekusi untuk Claude Code. Kerjakan berurutan Fase 0 sampai Fase 7. Satu fase satu sesi kerja. Setiap fase punya kriteria selesai yang bisa diverifikasi. Konteks bisnis lengkap ada di `analisis-kuesioner.md`, konvensi teknis di `CLAUDE.md` root repo.
+Rencana eksekusi untuk Claude Code. Kerjakan berurutan Fase 0 sampai Fase 8. Satu fase satu sesi kerja. Setiap fase punya kriteria selesai yang bisa diverifikasi. Konteks bisnis lengkap ada di `analisis-kuesioner.md`, konvensi teknis di `CLAUDE.md` root repo.
 
 ## Tujuan Produk
 
@@ -169,6 +169,60 @@ Selesai jika app terpasang di HP sungguhan, Lighthouse PWA installable lolos, ek
 ### Fase 7. Uji Lapangan Catat Dobel
 
 Bukan fase koding. Satu minggu Aiman catat di aplikasi dan di buku sekaligus (dia sudah bersedia, jawaban 47). Setiap malam bandingkan. Kumpulkan koreksi, perbaiki, baru lepas buku.
+
+### Fase 8. Laporan Investor
+
+Ditambahkan 18 Jul 2026 atas arahan pemilik. Tujuan: aplikasi bisa menghasilkan laporan keuangan yang layak diperlihatkan ke calon investor (atau AI agent milik investor) sebagai dasar suntikan modal. Keluaran akhir: PDF laporan keuangan plus pendamping JSON yang angkanya identik, supaya bisa diverifikasi mesin. Fase ini dipecah tiga sub-fase, kerjakan berurutan. 8a boleh berjalan paralel dengan Fase 7 karena makin cepat data dikeraskan, makin panjang deret historis yang bersih untuk investor. Database produksi sudah berisi data nyata, semua migrasi wajib aditif (tidak mengubah atau menghapus kolom/fungsi yang dipakai versi app yang sedang terpasang).
+
+#### Fase 8a. Pengerasan Data Keuangan
+
+Menutup celah data yang membuat angka laporan tidak bisa diaudit.
+
+Tambahan model data (migrasi aditif).
+
+```sql
+-- belanja bahan, harga historis tercatat (bukan cuma cost_per_unit terkini)
+ingredient_purchases(id, ingredient_id fk, purchased_at date, qty int, total_cost int, note text null)
+
+-- stock_movements.kind ditambah 'purchase'
+-- expenses.category ditambah 'sewa','gaji','promosi'
+-- expenses.purchase_id uuid null fk unique -> ingredient_purchases, biar belanja otomatis jadi pengeluaran (tidak dobel catat)
+-- sale_items.hpp_at_sale int null  -- HPP per botol saat transaksi, dibekukan oleh record_sale
+
+-- aset / modal usaha
+assets(id, name, purchased_at date, cost int, useful_life_months int null, note text null, is_active bool)
+```
+
+Tugas.
+1. RPC `record_purchase(ingredient_id, qty, total_cost, purchased_at, expense_category, note)`. Atomik: insert `ingredient_purchases`, tambah `ingredients.stock_qty`, update `ingredients.cost_per_unit` dengan rata rata bergerak `(stok_lama*biaya_lama + total_cost) / (stok_lama + qty)` (kalau stok lama <= 0 pakai `total_cost/qty`), catat `stock_movements` kind `purchase`, insert `expenses` kategori `bahan` atau `kemasan` yang tertaut `purchase_id`. RPC `undo_purchase` hanya untuk hari yang sama, membalik stok dan menghapus expense tertaut (cost_per_unit dibiarkan, terdokumentasi).
+2. `record_sale` dimodifikasi (signature tidak berubah): hitung `hpp_at_sale` per item di sisi SQL dari resep kali `cost_per_unit` saat itu. Migrasi backfill `sale_items.hpp_at_sale` yang lama pakai biaya terkini (pendekatan terbaik yang ada).
+3. Perluas kategori pengeluaran di constraint dan di UI `ExpenseQuickAdd`: tambah `sewa`, `gaji`, `promosi`.
+4. `reports.ts` memakai `hpp_at_sale` bila terisi, fallback perhitungan biaya terkini bila null.
+5. UI Catat Belanja di tab Bahan: pilih bahan, kuantitas, total harga, tanggal, kategori pengeluaran. Beri keterangan bahwa belanja lewat form ini otomatis tercatat sebagai pengeluaran (jangan input dobel di Rekap).
+6. Halaman Aset di tab Lainnya: daftar aset/modal usaha, tambah, tandai nonaktif. Belum ada perhitungan depresiasi (itu 8b).
+7. RLS aktif untuk semua tabel baru, hanya authenticated.
+
+Selesai jika unit test rata rata bergerak dan snapshot HPP hijau, `record_purchase` terbukti atomik di integration test, `npm run build` dan `npm run test` lolos, dan migrasi terbukti aditif (app versi lama tetap jalan terhadap skema baru).
+
+#### Fase 8b. Mesin Analisis Keuangan
+
+Fungsi murni di `src/lib/finance.ts` dengan unit test lengkap, tanpa perhitungan di komponen UI (konvensi sama dengan `pricing.ts`).
+
+1. Laba rugi per periode: omzet, HPP terjual (dari snapshot), laba kotor, pengeluaran operasional per kategori, depresiasi garis lurus dari `assets` yang punya `useful_life_months`, laba bersih.
+2. Unit economics per kanal: omzet, botol, HPP, margin per kanal per periode.
+3. Tren pertumbuhan bulanan: omzet, laba, jumlah transaksi, repeat rate.
+4. Arus kas sederhana: kas masuk (penjualan lunas plus pelunasan piutang berdasar `paid_at`), kas keluar (pengeluaran), posisi piutang dan umur piutang (aging).
+
+Selesai jika semua angka tereproduksi dari data uji yang dihitung manual di test.
+
+#### Fase 8c. Laporan Investor, PDF dan JSON
+
+1. Halaman Laporan Investor di tab Lainnya. Pilih rentang periode (default 3 bulan terakhir), pratinjau laporan: profil usaha singkat, laba rugi, unit economics per kanal, tren, arus kas, piutang, aset.
+2. Unduh PDF. Renderer di-lazy-load supaya bundle utama tetap ringan (pilih antara `@react-pdf/renderer` atau print stylesheet, putuskan saat implementasi dengan uji di iPhone Safari).
+3. Unduh JSON pendamping dengan skema stabil dan berversi (`report_version`), angka identik dengan PDF, dirancang untuk dibaca AI agent investor.
+4. Halaman metodologi singkat di laporan: basis perhitungan (akrual sederhana), sumber tiap angka, tanggal cetak.
+
+Selesai jika PDF terbuka benar di HP, angka PDF dan JSON identik dengan hasil `finance.ts` pada data uji, dan pemilik bisa menghasilkan laporan tanpa bantuan.
 
 ## Backlog Setelah MVP
 

@@ -130,3 +130,44 @@ export async function adjustFinishedStock(variantId: string, newQty: number): Pr
   })
   if (error) throw error
 }
+
+/** Kategori pengeluaran yang boleh dipakai belanja bahan (tertaut, tak dobel catat). */
+export type PurchaseExpenseCategory = 'bahan' | 'kemasan'
+
+export type RecordPurchaseInput = {
+  ingredientId: string
+  qty: number
+  totalCost: number
+  purchasedAt: string // YYYY-MM-DD (WIB)
+  expenseCategory: PurchaseExpenseCategory
+  note: string | null
+}
+
+/**
+ * Catat belanja bahan: tambah stok bahan, update cost_per_unit (rata-rata
+ * bergerak), dan insert pengeluaran tertaut — semua atomik di RPC.
+ */
+export async function recordPurchase(
+  input: RecordPurchaseInput,
+): Promise<{ purchaseId: string; stockQty: number; costPerUnit: number }> {
+  const { data, error } = await supabase.rpc('record_purchase', {
+    p_ingredient_id: input.ingredientId,
+    p_qty: input.qty,
+    p_total_cost: input.totalCost,
+    p_purchased_at: input.purchasedAt,
+    p_expense_category: input.expenseCategory,
+    p_note: input.note,
+  })
+  if (error) throw error
+  return {
+    purchaseId: data.purchase_id,
+    stockQty: data.stock_qty,
+    costPerUnit: data.cost_per_unit,
+  }
+}
+
+/** Batalkan belanja (hanya hari yang sama): balik stok, hapus pengeluaran tertaut. */
+export async function undoPurchase(purchaseId: string): Promise<void> {
+  const { error } = await supabase.rpc('undo_purchase', { p_purchase_id: purchaseId })
+  if (error) throw error
+}

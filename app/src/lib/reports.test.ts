@@ -72,6 +72,39 @@ test('rekap harian kosong menghasilkan nol', () => {
   expect(r.topProducts).toEqual([])
 })
 
+test('HPP terjual: utamakan hpp_at_sale (snapshot) di atas biaya resep terkini', () => {
+  // hppAtSale beda dari map (A snapshot 9.000 vs map 10.000, B snapshot 8.000 vs 7.750)
+  const snapSales: SaleRecord[] = [
+    { channel: 'lapak', payment: 'cash', total: 76000, customerId: null, items: [{ variantId: 'A', qty: 2, lineTotal: 76000, hppAtSale: 9000 }] },
+    { channel: 'cfd', payment: 'qris', total: 45000, customerId: 'C1', items: [{ variantId: 'B', qty: 3, lineTotal: 45000, hppAtSale: 8000 }] },
+  ]
+  const r = computeDailyRecap(snapSales, [], hpp, variantMeta)
+  // A: 2*9.000=18.000 ; B: 3*8.000=24.000 → 42.000 (bukan 2*10.000 + 3*7.750)
+  expect(r.hppSold).toBe(42000)
+})
+
+test('HPP terjual: fallback ke biaya resep terkini saat hpp_at_sale null/kosong', () => {
+  const mixedSales: SaleRecord[] = [
+    // A: snapshot terisi → pakai 9.000
+    { channel: 'lapak', payment: 'cash', total: 38000, customerId: null, items: [{ variantId: 'A', qty: 1, lineTotal: 38000, hppAtSale: 9000 }] },
+    // B: snapshot null → fallback map 7.750
+    { channel: 'cfd', payment: 'cash', total: 15000, customerId: null, items: [{ variantId: 'B', qty: 1, lineTotal: 15000, hppAtSale: null }] },
+    // A lagi: snapshot undefined (field hilang) → fallback map 10.000
+    { channel: 'lapak', payment: 'cash', total: 38000, customerId: null, items: [{ variantId: 'A', qty: 1, lineTotal: 38000 }] },
+  ]
+  const r = computeDailyRecap(mixedSales, [], hpp, variantMeta)
+  // 9.000 + 7.750 + 10.000
+  expect(r.hppSold).toBe(26750)
+})
+
+test('HPP terjual: hpp_at_sale null pada varian tanpa resep = 0 (fallback map kosong)', () => {
+  const noRecipe: SaleRecord[] = [
+    { channel: 'lapak', payment: 'cash', total: 20000, customerId: null, items: [{ variantId: 'Z', qty: 2, lineTotal: 20000, hppAtSale: null }] },
+  ]
+  const r = computeDailyRecap(noRecipe, [], new Map(), variantMeta)
+  expect(r.hppSold).toBe(0)
+})
+
 test('rekap periode: tren per hari dengan hari kosong terisi nol', () => {
   const periodSales: SaleRecordWithDate[] = [
     { ...sales[0], dateWIB: '2026-07-09' },
