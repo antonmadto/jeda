@@ -215,6 +215,16 @@ Fungsi murni di `src/lib/finance.ts` dengan unit test lengkap, tanpa perhitungan
 
 Selesai jika semua angka tereproduksi dari data uji yang dihitung manual di test.
 
+##### Catatan metodologi (8b)
+
+Keputusan basis perhitungan `src/lib/finance.ts` (untuk halaman metodologi laporan):
+- **A. Laba rugi (akrual).** Omzet diakui saat penjualan (tanggal WIB `sold_at`), termasuk yang belum lunas. HPP terjual dari snapshot `hpp_at_sale` (fallback biaya resep terkini bila null). Pengeluaran operasional (opex) TIDAK memasukkan kategori `bahan` dan `kemasan` karena biaya barang itu sudah terhitung di dalam HPP; memasukkannya berarti dobel hitung. Depresiasi garis lurus `cost / useful_life_months` per bulan, hanya aset aktif ber-masa-manfaat, dihitung penuh per bulan (tanpa proporsi harian). Laba bersih = laba kotor − opex − depresiasi.
+- **B. Unit economics per kanal.** Omzet, botol, HPP, laba kotor, margin %, harga jual rata-rata per botol, dan porsi diskon per kanal. Uang tetap integer rupiah; persen dibulatkan 1 desimal; pembagian nol dijaga (hasil 0).
+- **C. Tren bulanan.** Per bulan WIB: omzet, laba kotor, laba bersih, jumlah transaksi, botol, pertumbuhan omzet bulan-ke-bulan (null di bulan pertama / penyebut nol), dan repeat rate (pakai `computeRepeatRate` yang sama dengan rekap, tidak dibuat ulang).
+- **D. Arus kas (kas).** Kas masuk memakai `paid_at` (lunas tanpa `paid_at` dianggap tunai di `sold_at`; belum lunas tanpa `paid_at` belum jadi kas). Kas keluar mencakup SEMUA pengeluaran termasuk `bahan`/`kemasan` — sengaja asimetris dengan laba rugi karena kas mencatat belanja nyata saat uang keluar. Piutang = belum lunas tanpa `paid_at` per akhir periode, dikelompokkan umur ≤7, 8–30, dan >30 hari dari `sold_at`.
+
+Rekap harian (`reports.ts`) sengaja TIDAK diubah: itu pandangan kas ala Aiman; `finance.ts` adalah pandangan investor yang terpisah.
+
 #### Fase 8c. Laporan Investor, PDF dan JSON
 
 1. Halaman Laporan Investor di tab Lainnya. Pilih rentang periode (default 3 bulan terakhir), pratinjau laporan: profil usaha singkat, laba rugi, unit economics per kanal, tren, arus kas, piutang, aset.

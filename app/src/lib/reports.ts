@@ -65,7 +65,19 @@ export type TopProduct = {
   omzet: number
 }
 
-const CHANNEL_ORDER: Channel[] = ['lapak', 'cfd', 'online', 'bulk']
+export const CHANNEL_ORDER: Channel[] = ['lapak', 'cfd', 'online', 'bulk']
+
+/**
+ * HPP per botol terjual: utamakan snapshot `hppAtSale` (dibekukan saat transaksi),
+ * bila null/kosong fallback ke biaya resep terkini, lalu 0 (varian tanpa resep).
+ * Satu-satunya sumber logika ini; dipakai `aggregate` di sini dan `finance.ts`.
+ */
+export function resolveHppPerBottle(
+  item: { variantId: string; hppAtSale?: number | null },
+  hppByVariant: Map<string, number>,
+): number {
+  return item.hppAtSale ?? hppByVariant.get(item.variantId) ?? 0
+}
 
 type Totals = {
   omzet: number
@@ -110,7 +122,7 @@ function aggregate(
       ch.bottles += item.qty
       // Utamakan HPP yang dibekukan saat transaksi (hppAtSale); bila null/kosong
       // (varian tanpa resep atau data lama belum di-backfill) pakai biaya terkini.
-      const hppPerBottle = item.hppAtSale ?? hppByVariant.get(item.variantId) ?? 0
+      const hppPerBottle = resolveHppPerBottle(item, hppByVariant)
       hppSold += item.qty * hppPerBottle
 
       const meta = variantMeta.get(item.variantId)
