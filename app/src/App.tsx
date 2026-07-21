@@ -34,6 +34,7 @@ const PelangganPage = lazyWithRetry(() => import('./pages/PelangganPage'))
 const PelangganDetailPage = lazyWithRetry(() => import('./pages/PelangganDetailPage'))
 const ExportPage = lazyWithRetry(() => import('./pages/ExportPage'))
 const AsetPage = lazyWithRetry(() => import('./pages/AsetPage'))
+const LaporanPage = lazyWithRetry(() => import('./pages/LaporanPage'))
 
 function PageFallback() {
   return <div className="flex min-h-[60vh] items-center justify-center text-muted">Memuat…</div>
@@ -103,6 +104,7 @@ export function AppShell() {
               <Route path="/lainnya/pelanggan" element={<PelangganPage />} />
               <Route path="/lainnya/pelanggan/:id" element={<PelangganDetailPage />} />
               <Route path="/lainnya/aset" element={<AsetPage />} />
+              <Route path="/lainnya/laporan" element={<LaporanPage />} />
               <Route path="/lainnya/ekspor" element={<ExportPage />} />
             </Routes>
           </Suspense>

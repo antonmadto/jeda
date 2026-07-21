@@ -50,6 +50,7 @@ type SaleRow = {
 type ExpenseRow = { spent_at: string; category: ExpenseCategory; amount: number }
 
 type AssetRow = {
+  name: string
   purchased_at: string
   cost: number
   useful_life_months: number | null
@@ -128,7 +129,7 @@ export async function fetchFinanceData(
       fetchAllRows<AssetRow>((from, to) =>
         supabase
           .from('assets')
-          .select('purchased_at, cost, useful_life_months, is_active')
+          .select('name, purchased_at, cost, useful_life_months, is_active')
           .order('purchased_at')
           .order('id')
           .range(from, to) as unknown as PromiseLike<{ data: AssetRow[] | null; error: unknown }>,
@@ -158,6 +159,7 @@ export async function fetchFinanceData(
       amount: e.amount,
     })),
     assets: assetRows.map((a) => ({
+      name: a.name,
       purchasedAt: a.purchased_at,
       cost: a.cost,
       usefulLifeMonths: a.useful_life_months,

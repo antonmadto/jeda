@@ -51,6 +51,8 @@ export type FinanceExpense = {
 
 /** Aset/modal usaha; purchasedAt sudah tanggal WIB (assets.purchased_at date). */
 export type FinanceAsset = {
+  /** Nama aset — hanya untuk tampilan laporan, tidak dipakai perhitungan apa pun. */
+  name: string
   purchasedAt: string // YYYY-MM-DD (WIB)
   cost: number
   /** null → tanpa depresiasi (menyumbang 0). */

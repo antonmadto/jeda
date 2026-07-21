@@ -56,10 +56,10 @@ test('laba rugi: omzet akrual (semua status), COGS snapshot, opex tanpa bahan/ke
     { spentAt: '2026-02-01', category: 'gaji', amount: 111111 }, // luar rentang
   ]
   const assets: FinanceAsset[] = [
-    { purchasedAt: '2026-01-10', cost: 12000000, usefulLifeMonths: 24, isActive: true }, // 500.000/bln, Jan termasuk
-    { purchasedAt: '2026-01-01', cost: 3000000, usefulLifeMonths: null, isActive: true }, // tanpa depresiasi → 0
-    { purchasedAt: '2025-01-05', cost: 6000000, usefulLifeMonths: 12, isActive: true }, // habis Des 2025 → 0 di Jan 2026
-    { purchasedAt: '2026-01-01', cost: 9999999, usefulLifeMonths: 12, isActive: false }, // nonaktif → 0
+    { name: 'Aset uji', purchasedAt: '2026-01-10', cost: 12000000, usefulLifeMonths: 24, isActive: true }, // 500.000/bln, Jan termasuk
+    { name: 'Aset uji', purchasedAt: '2026-01-01', cost: 3000000, usefulLifeMonths: null, isActive: true }, // tanpa depresiasi → 0
+    { name: 'Aset uji', purchasedAt: '2025-01-05', cost: 6000000, usefulLifeMonths: 12, isActive: true }, // habis Des 2025 → 0 di Jan 2026
+    { name: 'Aset uji', purchasedAt: '2026-01-01', cost: 9999999, usefulLifeMonths: 12, isActive: false }, // nonaktif → 0
   ]
 
   const r = computeProfitLoss(sales, expenses, assets, hpp, JAN)
@@ -121,13 +121,13 @@ test('depresiasi: jendela bulan + pembulatan + aset dikecualikan', () => {
   const JUN: DateRange = { start: '2026-06-01', end: '2026-06-30' }
   const assets: FinanceAsset[] = [
     // beli Jun (bulan pertama) + pembulatan: round(100.000/3) = 33.333
-    { purchasedAt: '2026-06-01', cost: 100000, usefulLifeMonths: 3, isActive: true },
+    { name: 'Aset uji', purchasedAt: '2026-06-01', cost: 100000, usefulLifeMonths: 3, isActive: true },
     // beli Apr, masa 3 bln → Apr,Mei,Jun ; Jun = bulan terakhir: round(300.000/3) = 100.000
-    { purchasedAt: '2026-04-01', cost: 300000, usefulLifeMonths: 3, isActive: true },
-    { purchasedAt: '2026-06-01', cost: 500000, usefulLifeMonths: null, isActive: true }, // null → 0
-    { purchasedAt: '2026-06-01', cost: 900000, usefulLifeMonths: 12, isActive: false }, // nonaktif → 0
-    { purchasedAt: '2026-07-01', cost: 600000, usefulLifeMonths: 6, isActive: true }, // mulai Jul → belum, 0
-    { purchasedAt: '2026-03-01', cost: 600000, usefulLifeMonths: 3, isActive: true }, // Mar,Apr,Mei → habis sebelum Jun, 0
+    { name: 'Aset uji', purchasedAt: '2026-04-01', cost: 300000, usefulLifeMonths: 3, isActive: true },
+    { name: 'Aset uji', purchasedAt: '2026-06-01', cost: 500000, usefulLifeMonths: null, isActive: true }, // null → 0
+    { name: 'Aset uji', purchasedAt: '2026-06-01', cost: 900000, usefulLifeMonths: 12, isActive: false }, // nonaktif → 0
+    { name: 'Aset uji', purchasedAt: '2026-07-01', cost: 600000, usefulLifeMonths: 6, isActive: true }, // mulai Jul → belum, 0
+    { name: 'Aset uji', purchasedAt: '2026-03-01', cost: 600000, usefulLifeMonths: 3, isActive: true }, // Mar,Apr,Mei → habis sebelum Jun, 0
   ]
   const r = computeProfitLoss([], [], assets, hpp, JUN)
   // 33.333 + 100.000
@@ -215,7 +215,7 @@ test('tren bulanan: omzet/laba/transaksi/botol, growth MoM (guard), repeat rate'
   ]
   const assets: FinanceAsset[] = [
     // beli Feb, masa 2 bln → Feb,Mar ; round(1.200.000/2)=600.000
-    { purchasedAt: '2026-02-01', cost: 1200000, usefulLifeMonths: 2, isActive: true },
+    { name: 'Aset uji', purchasedAt: '2026-02-01', cost: 1200000, usefulLifeMonths: 2, isActive: true },
   ]
   // Riwayat pelanggan lengkap: C1 sudah beli Des 2025 (sebelum periode) → Jan repeat
   const history = [

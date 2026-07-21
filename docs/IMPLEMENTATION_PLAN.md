@@ -229,7 +229,7 @@ Rekap harian (`reports.ts`) sengaja TIDAK diubah: itu pandangan kas ala Aiman; `
 
 1. Halaman Laporan Investor di tab Lainnya. Pilih rentang periode (default 3 bulan terakhir), pratinjau laporan: profil usaha singkat, laba rugi, unit economics per kanal, tren, arus kas, piutang, aset.
 2. Unduh PDF. Renderer di-lazy-load supaya bundle utama tetap ringan (pilih antara `@react-pdf/renderer` atau print stylesheet, putuskan saat implementasi dengan uji di iPhone Safari).
-3. Unduh JSON pendamping dengan skema stabil dan berversi (`report_version`), angka identik dengan PDF, dirancang untuk dibaca AI agent investor.
+3. Unduh JSON pendamping dengan skema stabil dan berversi (`reportVersion`), angka identik dengan PDF, dirancang untuk dibaca AI agent investor.
 4. Halaman metodologi singkat di laporan: basis perhitungan (akrual sederhana), sumber tiap angka, tanggal cetak.
 
 Selesai jika PDF terbuka benar di HP, angka PDF dan JSON identik dengan hasil `finance.ts` pada data uji, dan pemilik bisa menghasilkan laporan tanpa bantuan.

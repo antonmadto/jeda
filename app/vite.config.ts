@@ -38,17 +38,28 @@ export default defineConfig({
       workbox: {
         // Cache app shell + aset build (termasuk chunk lazy) untuk buka cepat & offline shell.
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // Chunk renderer PDF (@react-pdf/renderer, ~1,4 MB) DIKECUALIKAN dari
+        // precache agar payload instal/update tetap ringan; ia hanya dipakai saat
+        // "Unduh PDF". Diambil on-demand lalu di-cache runtime (offline setelah
+        // pemakaian pertama).
+        globIgnores: ['**/investorReportPdf-*.js'],
         navigateFallback: 'index.html',
         // Deny sw.js & manifest dari navigateFallback.
         navigateFallbackDenylist: [/^\/sw\.js$/, /^\/manifest\.webmanifest$/],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        // Panggilan Supabase (cross-origin) tidak pernah di-cache: paksa NetworkOnly.
         runtimeCaching: [
           {
+            // Panggilan Supabase (cross-origin) tidak pernah di-cache: paksa NetworkOnly.
             urlPattern: ({ url }: { url: URL }) =>
               url.origin.endsWith('.supabase.co') || url.origin.endsWith('.supabase.in'),
             handler: 'NetworkOnly',
+          },
+          {
+            // Chunk PDF yang dikecualikan dari precache: cache saat pertama dipakai.
+            urlPattern: ({ url }: { url: URL }) => /\/assets\/investorReportPdf-.*\.js$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'pdf-renderer', expiration: { maxEntries: 2 } },
           },
         ],
       },
