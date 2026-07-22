@@ -98,7 +98,19 @@ export default function BelanjaTab() {
   return (
     <div className="flex flex-col gap-4">
       <section className="rounded-[20px] bg-white p-4 shadow-[0_2px_10px_rgba(160,60,95,.07)]">
-        <h2 className="mb-1 text-base font-extrabold text-ink">Rencana produksi berikutnya</h2>
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <h2 className="text-base font-extrabold text-ink">Rencana produksi berikutnya</h2>
+          <button
+            type="button"
+            disabled={totalBottles === 0}
+            onClick={() =>
+              setPlan(Object.fromEntries(variantsWithRecipe.map((v) => [v.variantId, ''])))
+            }
+            className="h-11 shrink-0 rounded-[12px] border-[1.5px] border-border-soft px-3 text-[13px] font-bold text-brand active:bg-brand/5 disabled:opacity-40"
+          >
+            Reset ke 0
+          </button>
+        </div>
         <p className="mb-2 text-xs font-medium text-muted">
           Hanya varian yang punya resep yang ikut dihitung.
         </p>
